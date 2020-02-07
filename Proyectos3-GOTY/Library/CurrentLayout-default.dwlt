@@ -21,7 +21,7 @@ MonoBehaviour:
   m_ShowMode: 4
   m_Title: 
   m_RootView: {fileID: 2}
-  m_MinSize: {x: 875, y: 542}
+  m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
   m_Maximized: 1
 --- !u!114 &2
@@ -46,7 +46,7 @@ MonoBehaviour:
     y: 0
     width: 2560
     height: 1357
-  m_MinSize: {x: 875, y: 542}
+  m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
 --- !u!114 &3
 MonoBehaviour:
@@ -115,7 +115,7 @@ MonoBehaviour:
   m_MinSize: {x: 881, y: 492}
   m_MaxSize: {x: 16006, y: 14042}
   vertical: 0
-  controlID: 161
+  controlID: 36
 --- !u!114 &6
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -140,7 +140,7 @@ MonoBehaviour:
   m_MinSize: {x: 605, y: 492}
   m_MaxSize: {x: 12005, y: 14042}
   vertical: 1
-  controlID: 134
+  controlID: 37
 --- !u!114 &7
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -166,7 +166,7 @@ MonoBehaviour:
   m_MinSize: {x: 605, y: 221}
   m_MaxSize: {x: 12005, y: 4021}
   vertical: 0
-  controlID: 135
+  controlID: 38
 --- !u!114 &8
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -450,9 +450,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 48cfffff
-      m_LastClickedID: -12472
-      m_ExpandedIDs: 48cfffff4afbffff72fbffff
+      m_SelectedIDs: 
+      m_LastClickedID: 0
+      m_ExpandedIDs: 72fbffff583f0000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -512,9 +512,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 17.665623, y: 2.9788132, z: 16.379337}
+    m_Target: {x: -0.17000008, y: 0.9433298, z: 0}
     speed: 2
-    m_Value: {x: 17.665623, y: 2.9788132, z: 16.379337}
+    m_Value: {x: -0.17000622, y: 0.9433202, z: 0.00002417831}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -560,13 +560,13 @@ MonoBehaviour:
     m_GridAxis: 1
     m_gridOpacity: 0.5
   m_Rotation:
-    m_Target: {x: 0.014993944, y: -0.38436127, z: -0.0061183427, w: -0.9231477}
+    m_Target: {x: -0.18093856, y: 0.120641045, z: -0.022244941, w: -0.97591954}
     speed: 2
-    m_Value: {x: 0.014983271, y: -0.3857075, z: -0.0061402204, w: -0.92247903}
+    m_Value: {x: -0.18088628, y: 0.122092165, z: -0.022513999, w: -0.97563666}
   m_Size:
-    m_Target: 34.49563
+    m_Target: 42.594406
     speed: 2
-    m_Value: 36.12108
+    m_Value: 42.59443
   m_Ortho:
     m_Target: 0
     speed: 2
@@ -767,21 +767,21 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/TextMesh Pro/Resources/Fonts & Materials
+    - Assets/Prefabs
   m_ViewMode: 1
   m_StartGridSize: 96
   m_LastFolders:
-  - Assets/TextMesh Pro/Resources/Fonts & Materials
+  - Assets/Prefabs
   m_LastFoldersGridSize: 96
   m_LastProjectPath: "E:\\CARRERA\\3\xBACARRERA\\Proyecto de Videojuegos\\Proyectos
     3\\Proyectos3-GOTY"
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 34420000
-    m_LastClickedID: 16948
-    m_ExpandedIDs: 00000000543e000000420000024200000442000006420000084200000a4200000c4200000e420000104200001242000014420000164200002c4200003242000000ca9a3b
+    scrollPos: {x: 0, y: 61}
+    m_SelectedIDs: 5e420000
+    m_LastClickedID: 16990
+    m_ExpandedIDs: 000000005e3e00003c4200003e42000040420000424200004442000046420000484200004a4200004c4200004e4200005042000052420000544200005642000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -809,7 +809,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000543e000000420000024200000442000006420000084200000a4200000c4200000e42000010420000124200001442000016420000
+    m_ExpandedIDs: 000000005e3e00003c4200003e42000040420000424200004442000046420000484200004a4200004c4200004e42000050420000524200005442000056420000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -923,7 +923,7 @@ MonoBehaviour:
   m_LockTracker:
     m_IsLocked: 0
   m_PreviewResizer:
-    m_CachedPref: 160
+    m_CachedPref: 422
     m_ControlHash: -371814159
     m_PrefName: Preview_InspectorPreview
   m_PreviewWindow: {fileID: 0}
