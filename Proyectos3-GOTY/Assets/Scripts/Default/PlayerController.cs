@@ -6,22 +6,43 @@ using UnityEngine.UI;
 public class PlayerController : MonoBehaviour 
 
 {
+//-----------------------ASSIGNABLES-----------------------------//
+    [Header("Assignables")]
+    [Tooltip("Camera assigned 2 the player")]
     public GameObject myCamera;
-    public float speed;
-    public float maxSpeed = 20; 
-    public float jumpForce; 
+    [Tooltip("Players rigidbody")]
     public Rigidbody rb;
+    [Tooltip("Layer Mask acting as floor, used for the looking")]
+    public LayerMask FloorLayer;
+    [HideInInspector]
+    public float hori, verti;
+    private Vector3 normalVector = Vector3.up;
+
+//-----------------------MOVEMENT-------------------------------//
+    [Header("Movement")]
+    [Tooltip("Speed assigned 2 the player")]
+    public float speed;
+    [Tooltip("Maximum speed assigned 2 the player")]
+    public float maxSpeed = 20; 
+    [Tooltip("Maximum slope angle")]
+    public float maxSlopeAngle = 35f; 
     private Vector3 moveInput;
     private Vector3 moveVelocity;
     private Vector3 pointToLook;
 
-    public LayerMask FloorLayer;
-    public float maxSlopeAngle = 35f; 
+//--------------------JUMPING----------------------------------//
+    [Header("Jumping")]
+    [Tooltip("Jump force assigned 2 the player")]
+    public float jumpForce;
+    [Tooltip("Cooldown for players jump")]
     public float jumpCooldown = 2f;
-    public float hori, verti; 
-    public bool isJumping, isGrounded;
+    [Tooltip("Is the player jumping?")] 
+    public bool isJumping;
+    [Tooltip("Is the player grounded?")]
+    public bool isGrounded;
+    [Tooltip("Is the player ready to jump?")]
     public bool isReadyToJump = true;
-    private Vector3 normalVector = Vector3.up;
+//-------------------------------------------------------------//
 
     public void Start()
     {        
@@ -73,14 +94,48 @@ public class PlayerController : MonoBehaviour
     public void Move()
     {
          rb.AddForce(Vector3.down * 10);
-        rb.velocity = new Vector3(moveVelocity.x , rb.velocity.y, moveVelocity.z );
-        if(hori == 0 && verti == 0)
-        {
-            rb.velocity = new Vector3(-moveVelocity.x * Time.deltaTime, rb.velocity.y, -moveVelocity.z * Time.deltaTime);
-        }
+        Vector2 mag = FindVelRelativeToLook();
+        float xMag = mag.x;
+        float yMag = mag.y;
+        
+        //counter movement here
 
         if (isReadyToJump && isJumping)
             Jump();
+        
+        float maxSpeed = this.maxSpeed;
+        
+        if(hori > 0 && xMag > maxSpeed) hori = 0;
+        if(hori < 0 && xMag < -maxSpeed) hori = 0;
+        if(verti > 0 && yMag > maxSpeed) verti = 0;
+        if(verti < 0 && yMag < -maxSpeed) verti = 0; 
+        
+        float multiplier = 1f, multiplierV = 1f; 
+
+        //moverse la mitad de rápido en el aire
+        if(!isGrounded)
+        {
+            multiplier = 0.5f;
+            multiplierV = 0.5f;
+        }
+        rb.AddForce(rb.transform.forward * verti * speed * Time.deltaTime * multiplierV * multiplier);
+        rb.AddForce(rb.transform.right * hori * speed * Time.deltaTime * multiplier);
+
+    }
+    
+
+    public Vector2 FindVelRelativeToLook()
+    {
+        float lookAngle = rb.transform.eulerAngles.y;
+        float moveAngle = Mathf.Atan2(rb.velocity.x, rb.velocity.z) * Mathf.Rad2Deg;
+
+        float u = Mathf.DeltaAngle(lookAngle,moveAngle);
+        float v = 90 - u;
+        float magnitude = rb.velocity.magnitude;
+        float yMag = magnitude * Mathf.Cos(u * Mathf.Deg2Rad);
+        float xMag = magnitude * Mathf.Cos(v * Mathf.Deg2Rad);
+
+        return new Vector2(xMag,yMag);
     }
     /* <MyInput()>
     Simplemente guarda el input necesario por ahora; ampliable.
