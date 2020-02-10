@@ -25,7 +25,11 @@ public class PlayerController : MonoBehaviour
     [Tooltip("Maximum speed assigned 2 the player")]
     public float maxSpeed = 20; 
     [Tooltip("Maximum slope angle")]
-    public float maxSlopeAngle = 35f; 
+    public float maxSlopeAngle = 35f;
+    [Tooltip("Friction force applyed to the player")] 
+    public float counterMovement = 0.175f; 
+    [HideInInspector]
+    public float threshold = 0.01f;
     private Vector3 moveInput;
     private Vector3 moveVelocity;
     private Vector3 pointToLook;
@@ -48,6 +52,11 @@ public class PlayerController : MonoBehaviour
     {        
         rb = rb.GetComponent<Rigidbody>();
         myCamera.GetComponent<SmoothCameraMovement>().playerTransform = gameObject.transform;
+        
+        //Cursor Visibility
+
+        Cursor.visible = false; 
+
     }
     public void Update()
     {
@@ -93,12 +102,12 @@ public class PlayerController : MonoBehaviour
 
     public void Move()
     {
-         rb.AddForce(Vector3.down * 10);
+         rb.AddForce(Vector3.down * Time.deltaTime * 10);
         Vector2 mag = FindVelRelativeToLook();
         float xMag = mag.x;
         float yMag = mag.y;
         
-        //counter movement here
+        CounterMovement(hori,verti,mag);
 
         if (isReadyToJump && isJumping)
             Jump();
@@ -123,7 +132,33 @@ public class PlayerController : MonoBehaviour
 
     }
     
+    /* <CounterMovement()>
+    Actúa de rozamiento propio, dado que no nos afectará el del escenario.
+    */
+    private void CounterMovement(float x, float y, Vector2 mag)
+    {
+         if(Mathf.Abs(mag.x) > threshold && Mathf.Abs(x) < 0.05f || (mag.x < -threshold && x > 0) || (mag.x > threshold && x <0))
+        {
+            rb.AddForce(speed * rb.transform.right * Time.deltaTime * -mag.x * counterMovement);
+        }
+        if(Mathf.Abs(mag.y) > threshold && Mathf.Abs(y) < 0.05f || (mag.y < -threshold && y > 0) || (mag.y > threshold && y <0))
+        {
+            rb.AddForce(speed * rb.transform.forward * Time.deltaTime * -mag.y * counterMovement);
+        }
+        
+        if (Mathf.Sqrt((Mathf.Pow(rb.velocity.x, 2) + Mathf.Pow(rb.velocity.z, 2))) > maxSpeed)
+        {
+            float fallspeed = rb.velocity.y;
+            Vector3 n = rb.velocity.normalized * maxSpeed;
+            rb.velocity = new Vector3(n.x, fallspeed, n.z);
+        }
 
+    }
+
+    /* <FindVelRelativeToLook()>
+    Encuentra la velocidad relativa actual al vector.forward del player.
+    */
+    
     public Vector2 FindVelRelativeToLook()
     {
         float lookAngle = rb.transform.eulerAngles.y;
