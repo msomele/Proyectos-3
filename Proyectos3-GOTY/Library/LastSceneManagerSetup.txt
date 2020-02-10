@@ -1,5 +1,5 @@
 sceneSetups:
-- path: Assets/Scenes/Barbarian.unity
+- path: Assets/Scenes/EnemiesTestScene.unity
   isLoaded: 1
   isActive: 1
   isSubScene: 0
