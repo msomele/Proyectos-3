@@ -3,16 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class BarbarianController : PlayerController 
+ //Con heredar de PlayerController y en: Start, Update y FixedUpdate poner base.tatata() ya se mueve con el defaultSet.
 {
-    // Start is called before the first frame update
+    
     void Start()
     {
-        PlayerController.Instantiate(this);
+        base.Start();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        
+        base.Update();   
+    }
+    void FixedUpdate() 
+    {
+        base.FixedUpdate();
     }
 }

@@ -10,30 +10,43 @@ public class PlayerController : MonoBehaviour
     public float speed;
     public float maxSpeed = 20; 
     public float jumpForce; 
-    private Rigidbody rb;
+    public Rigidbody rb;
     private Vector3 moveInput;
     private Vector3 moveVelocity;
     private Vector3 pointToLook;
 
     public LayerMask FloorLayer;
     public float maxSlopeAngle = 35f; 
-    [SerializeField]
     public float jumpCooldown = 2f;
     public float hori, verti; 
     public bool isJumping, isGrounded;
     public bool isReadyToJump = true;
     private Vector3 normalVector = Vector3.up;
 
-    void Start()
+    public void Start()
     {        
-        rb = GetComponent<Rigidbody>();
+        rb = rb.GetComponent<Rigidbody>();
         myCamera.GetComponent<SmoothCameraMovement>().playerTransform = gameObject.transform;
     }
-    void Update()
+    public void Update()
     {
         MyInput();
+        Look();
+             
+    }
+    public void FixedUpdate()
+    {
+       Move();
+    }
 
-        myCamera.GetComponent<SmoothCameraMovement>().playerTransform = transform;
+    /*  <Look()>
+    Crea un plano en +y, lanza un raycast desde la cam a dicho plano en función del puntero.El jugador rota hacia la dirección de dicho corte
+      en el caso de que el ratón se salga del plano, el jugador se quedará mirando al último punto.
+    */
+
+    public void Look()
+    {
+         myCamera.GetComponent<SmoothCameraMovement>().playerTransform = transform;
         moveInput = new Vector3(hori, 0f, verti);
         
         moveVelocity = moveInput * speed;
@@ -50,12 +63,16 @@ public class PlayerController : MonoBehaviour
         else
         {
             transform.LookAt(new Vector3(pointToLook.x, transform.position.y, pointToLook.z));
-        }        
+        }  
     }
-    void FixedUpdate()
+
+    /* <Move()>
+    Hay que cambiarlo, ahora se mueve con velocity y lo ideal es que se moviera con fuerzas. Permite que el player se mueva y condiciona el salto.
+    */
+
+    public void Move()
     {
-        
-        rb.AddForce(Vector3.down * 10);
+         rb.AddForce(Vector3.down * 10);
         rb.velocity = new Vector3(moveVelocity.x , rb.velocity.y, moveVelocity.z );
         if(hori == 0 && verti == 0)
         {
@@ -64,18 +81,19 @@ public class PlayerController : MonoBehaviour
 
         if (isReadyToJump && isJumping)
             Jump();
-
-
-        
     }
-
-    private void MyInput()
+    /* <MyInput()>
+    Simplemente guarda el input necesario por ahora; ampliable.
+    .*/
+    public void MyInput()
     {
         isJumping = Input.GetButton("Jump");
         hori = Input.GetAxis("Horizontal");
         verti = Input.GetAxis("Vertical");
     }
-
+    /* <Jump()>
+    Todo lo necesario para que salte y prepare el salto rápidamente. 
+    */
     private void Jump()
     {
         if(isGrounded && isReadyToJump)
@@ -110,6 +128,7 @@ public class PlayerController : MonoBehaviour
     }
 
     private bool CancellingGrounded;
+
     private void OnCollisionStay(Collision col)
     {
         int layer = col.gameObject.layer;
