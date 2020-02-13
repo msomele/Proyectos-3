@@ -12,13 +12,16 @@ public class EnemyAgent : MonoBehaviour
         Attack,
         Idle
     }
-
+    [HideInInspector]
     public AgentStates agentState;
+
+    [Header("Stats")]
     public float hp;
     public float attack_damage;
     public float speed;
     public float range;
     public float attackRate;
+    [HideInInspector]
     public Vector3 current_destination;
 
     //TODO

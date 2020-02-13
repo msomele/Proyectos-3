@@ -6,34 +6,66 @@ using UnityEngine.AI;
 public class SkeletonController : EnemyAgent
 {
     public GameObject current_objective;
+    [HideInInspector]
     public NavMeshAgent agent;
+
     [Header("Speed")]
     public float minimum_Speed;
     public float maximun_Speed;
+
     [HideInInspector]
     public bool roar;
-    private Animator animator;
-    private bool risen;
-    private float timeSpawning;
+    [HideInInspector]
     public float nextAttack;
+    public float meleeRange;
     private SkeletonAnimationController animController;
+    private Animator animator;
+    [HideInInspector]
+    public bool risen;
+    private float timeSpawning;
+    private Rigidbody rb;
     // Start is called before the first frame update
     void Start()
     {
+        rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
         nextAttack = 0f;
         agentState = AgentStates.Idle;
-        range = 3f;
+        range = meleeRange;
         risen = false;
         agent = GetComponent<NavMeshAgent>();
         animController = gameObject.GetComponent<SkeletonAnimationController>();
         current_objective = GameObject.FindWithTag("CurrentEnemyObjective");
         current_destination = current_objective.transform.position;
-        roar = randomizeBool();
-        timeSpawning = roar? 6.5f : 4.5f;
+        roar = RandomizeBool();
+        timeSpawning = roar? 6.5f : 5f;
         StartCoroutine(RiseFormTheDead());
     }
-    private bool randomizeBool()
+
+    // Update is called once per frame
+    void Update()
+    {
+        current_destination = current_objective.transform.position;
+        if (risen)
+        {
+            SetDestinationPoint(current_destination);
+            if (IsObjectiveOnAttackRange(range))
+            {
+                StopChasing();
+                nextAttack += Time.time;
+                if (nextAttack >= attackRate)
+                {
+                    nextAttack = 0f;
+                    Attack();
+                }
+            }else if(!animator.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
+            {
+                ChaseTarget();
+            }
+        }
+    }
+
+    private bool RandomizeBool()
     {
         int aux = Random.Range(0, 2);
         if (aux == 1)
@@ -56,28 +88,6 @@ public class SkeletonController : EnemyAgent
         else
         {
             return false;
-        }
-    }
-    // Update is called once per frame
-    void Update()
-    {
-        current_destination = current_objective.transform.position;
-        if (risen)
-        {
-            SetDestinationPoint(current_destination);
-            if (IsObjectiveOnAttackRange(range))
-            {
-                StopChasing();
-                nextAttack += Time.time;
-                if (nextAttack >= attackRate)
-                {
-                    nextAttack = 0f;
-                    Attack();
-                }
-            }else if(!animator.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
-            {
-                ChaseTarget();
-            }
         }
     }
 
@@ -105,21 +115,19 @@ public class SkeletonController : EnemyAgent
         }
     }
 
-    public void StopAttacking()
+    public void StopAttackingAnimation()
     {
         animController.attack = false;
     }
 
     public void ChaseTarget()
     {
-        //animator.Play("Run");
         animController.attack = false;
         agentState = AgentStates.Running;
         nextAttack = 0f;
         SetDestinationPoint(current_destination);
         agentState = AgentStates.Running;
-        agent.isStopped = false;
-        
+        agent.isStopped = false; 
         agent.velocity = agent.desiredVelocity;
     }
 
@@ -127,7 +135,6 @@ public class SkeletonController : EnemyAgent
     {
         RotateTowards(current_destination);
         animController.attack = false;
-        //agentState = AgentStates.Idle;
         agent.isStopped = true;
         agent.velocity = Vector3.zero;
     }
@@ -135,7 +142,7 @@ public class SkeletonController : EnemyAgent
     private void RotateTowards(Vector3 target)
     {
         Vector3 direction = (target - transform.position).normalized;
-        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));    // flattens the vector3
+        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));   
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * agent.angularSpeed);
     }
 
@@ -143,6 +150,7 @@ public class SkeletonController : EnemyAgent
     {
         yield return new WaitForSeconds(timeSpawning);
         SetDestinationPoint(current_destination);
+        
         InitializeRandomSpeed(minimum_Speed, maximun_Speed);
         risen = true;
     }

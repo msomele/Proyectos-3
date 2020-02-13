@@ -11,6 +11,7 @@ public class SkeletonAnimationController : MonoBehaviour
     private SkeletonController skeletonController;
     private EnemyAgent enemyAget;
     private bool once = false;
+    [HideInInspector]
     public bool attack;
     // Start is called before the first frame update
     void Start()
