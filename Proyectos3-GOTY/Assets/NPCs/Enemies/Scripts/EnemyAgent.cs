@@ -5,9 +5,20 @@ using UnityEngine;
 
 public class EnemyAgent : MonoBehaviour
 {
+    public enum AgentStates
+    {
+        Running,
+        Dead,
+        Attack,
+        Idle
+    }
+
+    public AgentStates agentState;
     public float hp;
     public float attack_damage;
     public float speed;
+    public float range;
+    public float attackRate;
     public Vector3 current_destination;
 
     //TODO
