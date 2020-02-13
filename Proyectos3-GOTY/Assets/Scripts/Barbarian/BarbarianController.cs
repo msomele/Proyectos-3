@@ -6,17 +6,21 @@ public class BarbarianController : PlayerController
  //Con heredar de PlayerController y en: Start, Update y FixedUpdate poner base.tatata() ya se mueve con el defaultSet.
 {
     
-    void Start()
+    new void Start()
     {
         base.Start();
     }
 
-    void Update()
+    new void Update()
     {
         base.Update();   
     }
-    void FixedUpdate() 
+    new void FixedUpdate() 
     {
         base.FixedUpdate();
     }
+    
+
+
+
 }

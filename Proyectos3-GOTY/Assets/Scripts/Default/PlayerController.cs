@@ -1,8 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+/*
 using UnityEngine.UI;
-
+using UnityEngine.UIElements;
+*/
 public class PlayerController : MonoBehaviour 
 
 {
@@ -46,7 +48,18 @@ public class PlayerController : MonoBehaviour
     public bool isGrounded;
     [Tooltip("Is the player ready to jump?")]
     public bool isReadyToJump = true;
+//-------------------HABILITIES-------------------------------//
+    [HideInInspector]
+    public bool hab1 = false; 
+    [HideInInspector]
+    public bool hab2 = false; 
+    [HideInInspector]
+    public bool hab3 = false; 
+    [HideInInspector]
+    public bool hab4 = false; 
 //-------------------------------------------------------------//
+
+
 
     public void Start()
     {        
@@ -180,6 +193,10 @@ public class PlayerController : MonoBehaviour
         isJumping = Input.GetButton("Jump");
         hori = Input.GetAxis("Horizontal");
         verti = Input.GetAxis("Vertical");
+        hab1 = Input.GetButton("Hability1");
+        hab2 = Input.GetButton("Hability2");
+        hab3 = Input.GetButton("Hability3");
+        hab4 = Input.GetButton("Hability4");
     }
     /* <Jump()>
     Todo lo necesario para que salte y prepare el salto rápidamente. 
