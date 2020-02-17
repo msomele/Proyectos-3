@@ -3,9 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerController : MonoBehaviour 
+public class PlayerController : MonoBehaviour
 
 {
+//-----------------------STATS-----------------------------------//
+
+    public float attackDamage = 5;
+    public float hp = 100; 
+
+
+
+
+
 //-----------------------ASSIGNABLES-----------------------------//
     [Header("Assignables")]
     [Tooltip("Camera assigned 2 the player")]
@@ -26,36 +35,30 @@ public class PlayerController : MonoBehaviour
     float hori, verti;
 
     //--------------------JUMPING----------------------------------//
-    public bool isGrounded; 
-    //-------------------HABILITIES-------------------------------//
-    private InputBarbarian controls; 
-    [HideInInspector]
-    public bool hab1 = false; 
-    [HideInInspector]
-    public bool hab2 = false; 
-    [HideInInspector]
-    public bool hab3 = false; 
-    [HideInInspector]
-    public bool hab4 = false;
+    public float jumpForce;
+    public float ownGravity = 10;
+    public bool isGrounded;
+    public bool jumpInput = false;
+    [SerializeField] private GameObject currentFloor;
+    RaycastHit hit;
+    //-------------------INPUTS-----------------------------------//
+    public InputBarbarian controls; 
 
     //------------------------CAMERA------------------------------//
     [Header("Camera info")]
     [SerializeField][Tooltip("Is this object visible to the camera?")]
     private bool amIVisible = true;
 
-
-
-
+    
 
     private void OnEnable() => controls.Gameplay.Enable();
-
     private void OnDisable() => controls.Gameplay.Disable();
 
     void Awake()
     {
         lookingInput = new Vector3();
-
         controls = new InputBarbarian();
+        myCamera = GameObject.FindGameObjectWithTag("MainCamera");
         myCamera.GetComponent<SmoothCameraMovement>().AddPlayer(gameObject);
     }
 
@@ -63,11 +66,8 @@ public class PlayerController : MonoBehaviour
     public void Start()
     {        
         rb = rb.GetComponent<Rigidbody>();
-        
-
-
-        Cursor.visible = false; 
-
+        Cursor.visible = false;
+        GetCurrentFloor();
     }
     public void Update()
     {
@@ -77,46 +77,27 @@ public class PlayerController : MonoBehaviour
     public void FixedUpdate()
     {
        Move();
+        jumpInput = controls.Gameplay.Jump.triggered;
+        if (isGrounded && jumpInput)
+            Jump();
+        if (!isGrounded && currentFloor!=null)
+            rb.AddForce(-currentFloor.transform.up * ownGravity);
     }
-    
 
+    /*  <Visibility>*/
     private void OnBecameInvisible() => amIVisible = false;
     private void OnBecameVisible() => amIVisible = true;
 
 
-    /*  <Look()>
-    Crea un plano en +y, lanza un raycast desde la cam a dicho plano en función del puntero.El jugador rota hacia la dirección de dicho corte
-      en el caso de que el ratón se salga del plano, el jugador se quedará mirando al último punto.
-    */
+    /*  <Look()>*/
 
     public void Look()
     {
         Vector2 lookValue = controls.Gameplay.Look.ReadValue<Vector2>();
+        lookingInput = new Vector3(lookValue.x, 0 , lookValue.y);
 
-        lookingInput.y += lookValue.x  * sensitivity * Time.deltaTime; //moves player in y axis based
-                                                                       //on the x axis of the right joystick (or the mouse horizontal movement)
-        lookingInput.y = Mathf.Clamp(lookingInput.y, 0, 360);
-        if (lookingInput.y == 360) lookingInput.y = 0; else if (lookingInput.y == 0) lookingInput.y = 360; //clamping and setting rotations for preventing maxbounds in vector
-        
-        //maybe clamping as well lookValue.y so it goes 90º each side input:::? 
-        transform.rotation = Quaternion.Euler(lookingInput);
+        transform.LookAt((rb.position + lookingInput));
 
-
-        /* Old method with old mouse settings 
-        Ray cameraRay = myCamera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
-        Plane groundPlane = new Plane(Vector3.up, Vector3.zero); 
-        float rayLength;
-
-        if (groundPlane.Raycast(cameraRay, out rayLength))
-        {
-            pointToLook = cameraRay.GetPoint(rayLength);
-            Debug.DrawLine(cameraRay.origin, pointToLook, Color.blue);
-            transform.LookAt(new Vector3(pointToLook.x, transform.position.y, pointToLook.z));
-        }
-        else
-        {
-            transform.LookAt(new Vector3(pointToLook.x, transform.position.y, pointToLook.z));
-        }  */
     }
 
     /* <Move()>*/
@@ -133,16 +114,35 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    
-    public void JumpEv()
+    /* <Jump()>*/
+    public void Jump()
     {
-        if(isGrounded)
-        rb.AddForce(transform.up, ForceMode.VelocityChange);
-
+        isGrounded = false;
+        rb.AddForce(transform.up * jumpForce, ForceMode.VelocityChange);
+        
     }
 
-  
-
+    /* <GetCurrentFloor()>*/
+    void GetCurrentFloor() //get this shit activable and desactivable
+    {
+        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit, Mathf.Infinity))
+        {
+            Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.down) * Mathf.Infinity, Color.cyan);
+            currentFloor = hit.transform.gameObject;
+        }
+    }
     
+   
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.layer==8)
+        {
+            isGrounded = true;
+            GetCurrentFloor();
+        }
+    }
+
+
 
 }
