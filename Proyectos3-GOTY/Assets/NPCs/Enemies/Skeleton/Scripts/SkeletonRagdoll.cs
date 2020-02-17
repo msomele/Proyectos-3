@@ -5,13 +5,29 @@ using UnityEngine.AI;
 
 public class SkeletonRagdoll : MonoBehaviour
 {
+    private float currentDisolveValue;
+    public Material dissolveMaterial;
+    SkinnedMeshRenderer[] childrenRenderer;
     // Start is called before the first frame update
     void Start()
     {
+        dissolveMaterial.SetFloat("Vector1_FEFF47F1", 0f);
+        currentDisolveValue = 0f;
+        childrenRenderer = GetComponentsInChildren<SkinnedMeshRenderer>();
+        foreach (var r in childrenRenderer)
+        {
+            r.material.SetFloat("Dissolve", currentDisolveValue);
+        }
         setRigidBodyState(true);
         setCollidersState(false);
     }
-
+    private void Update()
+    {
+        foreach (var r in childrenRenderer)
+        {
+            r.material.SetFloat("Vector1_FEFF47F1", currentDisolveValue);
+        }
+    }
     // Update is called once per frame
     public void Die()
     {
@@ -22,6 +38,7 @@ public class SkeletonRagdoll : MonoBehaviour
             skeleton.die();
         }
         */
+        StartCoroutine(Disolve(5f));
         setCollidersState(true);
         setRigidBodyState(false);
         GetComponent<Animator>().enabled = false;
@@ -50,5 +67,21 @@ public class SkeletonRagdoll : MonoBehaviour
             collider.enabled = state;
         }
         GetComponent<Collider>().enabled = !state;
+    }
+
+    IEnumerator Disolve(float waitTime)
+    {
+        
+        float duration = 2f;
+        int target = 1;
+        float start = 0f;
+        yield return new WaitForSeconds(waitTime);
+        for (float timer = 0; timer < duration; timer += Time.deltaTime)
+        {
+            float progress = timer / duration;
+            currentDisolveValue = Mathf.Lerp(start, target, progress);
+            yield return null;
+        }
+        Destroy(gameObject);
     }
 }
