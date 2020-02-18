@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 4400559916000663725}
   - component: {fileID: 4400559916070431816}
   - component: {fileID: 4911285951622680065}
+  - component: {fileID: 958042549}
   m_Layer: 9
   m_Name: DefaultPlayer
   m_TagString: Player
@@ -93,6 +94,9 @@ MonoBehaviour:
   jumpInput: 0
   currentFloor: {fileID: 0}
   amIVisible: 1
+  barbarianAnimator: {fileID: 4911285951622680065}
+  noOfClicks: 0
+  maxComboDelay: 1
 --- !u!114 &4400559916070431816
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -107,7 +111,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Actions: {fileID: -944628639613478452, guid: 333cdf735f3a96d4d899552e79073fa0,
     type: 3}
-  m_NotificationBehavior: 2
+  m_NotificationBehavior: 3
   m_UIInputModule: {fileID: 0}
   m_DeviceLostEvent:
     m_PersistentCalls:
@@ -135,7 +139,19 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 939b2984-6ca0-4cf4-bf45-c47749ee04ea
     m_ActionName: Gameplay/Jump[/Keyboard/space]
-  m_NeverAutoSwitchControlSchemes: 1
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 275d5336-7532-4e0b-8216-bbf73d9312f0
+    m_ActionName: Gameplay/LightAttack[/Keyboard/q,/XInputControllerWindows/buttonNorth]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: cfe266f8-d7ec-43f8-b6ea-0d599bd04c3e
+    m_ActionName: Gameplay/HeavyAttack[/Keyboard/e,/XInputControllerWindows/buttonEast]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 516ae892-ecc6-48ce-8467-5bee52953254
+    m_ActionName: Gameplay/LighterAttack[/Keyboard/shift,/XInputControllerWindows/buttonEast]
+  m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Gameplay
   m_SplitScreenIndex: -1
@@ -159,6 +175,50 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &958042549
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1522731072162567830}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a41ba28dc9808cf4fa119c792360df13, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  heavyKey: 0
+  lightKey: 0
+  lighterKey: 0
+  heavyAttack:
+    name: aa1
+    length: 0.667
+  lightAttack:
+    name: aa2
+    length: 0.667
+  lighterAttack:
+    name: 
+    length: 0
+  combos:
+  - name: HugeSmash
+    inputs:
+    - type: 0
+    - type: 1
+    comboAttack:
+      name: aa3
+      length: 0.667
+    onInputted:
+      m_PersistentCalls:
+        m_Calls: []
+  comboLeeway: 0.2
+  inputs: {fileID: 4400559916000663725}
+  anim: {fileID: 4911285951622680065}
+  lastInput:
+    type: 0
+  currentAttack:
+    name: 
+    length: 0
+  timer: 0
 --- !u!1 &1522731072778540194
 GameObject:
   m_ObjectHideFlags: 0
@@ -562,8 +622,8 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8230346661537197446}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
+  m_IsTrigger: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 0.007880883, y: 0.0060938364, z: 0.015964597}
   m_Center: {x: -0.005455784, y: -0.00017612246, z: 0.00036979426}

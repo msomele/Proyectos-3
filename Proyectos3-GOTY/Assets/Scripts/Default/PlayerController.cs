@@ -10,10 +10,7 @@ public class PlayerController : MonoBehaviour
 
     public float attackDamage = 5;
     public float hp = 100; 
-
-
-
-
+    
 
 //-----------------------ASSIGNABLES-----------------------------//
     [Header("Assignables")]
@@ -63,18 +60,18 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    public void Start()
+    public virtual void Start()
     {        
-        rb = rb.GetComponent<Rigidbody>();
+        rb = GetComponent<Rigidbody>();
         Cursor.visible = false;
         GetCurrentFloor();
     }
-    public void Update()
+    public virtual void Update()
     {
         Look();
              
     }
-    public void FixedUpdate()
+    public virtual void FixedUpdate()
     {
        Move();
         jumpInput = controls.Gameplay.Jump.triggered;
