@@ -5,22 +5,33 @@ using UnityEngine.AI;
 
 public class SkeletonRagdoll : MonoBehaviour
 {
-    private float currentDisolveValue;
+    public float currentDisolveValue;
     public Material dissolveMaterial;
     SkinnedMeshRenderer[] childrenRenderer;
+    private SkeletonController skeletonController;
     // Start is called before the first frame update
+
     void Start()
     {
+        GetComponent<Animator>().enabled = true;
+        GetComponent<SkeletonController>().enabled = true;
+        GetComponent<SkeletonAnimationController>().enabled = true;
+        GetComponent<AgentLinkMover>().enabled = true;
+        GetComponent<NavMeshAgent>().isStopped = false;
+
+        skeletonController = GetComponent<SkeletonController>();
         dissolveMaterial.SetFloat("Vector1_FEFF47F1", 0f);
         currentDisolveValue = 0f;
         childrenRenderer = GetComponentsInChildren<SkinnedMeshRenderer>();
         foreach (var r in childrenRenderer)
         {
-            r.material.SetFloat("Dissolve", currentDisolveValue);
+            r.material.SetFloat("Dissolve", 0f);
         }
+
         setRigidBodyState(true);
         setCollidersState(false);
     }
+
     private void Update()
     {
         foreach (var r in childrenRenderer)
@@ -31,24 +42,20 @@ public class SkeletonRagdoll : MonoBehaviour
     // Update is called once per frame
     public void Die()
     {
-        /*
-        SkeletonRagdoll skeleton = hit.transform.GetComponent<SkeletonRagdoll>();
-        if (skeleton != null)
-        {
-            skeleton.die();
-        }
-        */
+        skeletonController.agentState = EnemyAgent.AgentStates.Ragdolled;
         StartCoroutine(Disolve(5f));
         setCollidersState(true);
         setRigidBodyState(false);
         GetComponent<Animator>().enabled = false;
-        GetComponent<SkeletonController>().enabled = false;
+        //GetComponent<SkeletonController>().enabled = false;
         GetComponent<SkeletonAnimationController>().enabled = false;
         GetComponent<AgentLinkMover>().enabled = false;
-        GetComponent<NavMeshAgent>().enabled = false;
+        skeletonController.agent.velocity = Vector3.zero;
+        skeletonController.agent.isStopped = true;
+
     }
 
-    void setRigidBodyState(bool state)
+    public void setRigidBodyState(bool state)
     {
         Rigidbody[] rigidbodies = GetComponentsInChildren<Rigidbody>();
         foreach (Rigidbody rigidbody in rigidbodies)
@@ -59,7 +66,7 @@ public class SkeletonRagdoll : MonoBehaviour
         GetComponent<Rigidbody>().isKinematic = !state;
     }
 
-    void setCollidersState(bool state)
+    public void setCollidersState(bool state)
     {
         Collider[] colliders = GetComponentsInChildren<Collider>();
         foreach (Collider collider in colliders)
@@ -82,6 +89,10 @@ public class SkeletonRagdoll : MonoBehaviour
             currentDisolveValue = Mathf.Lerp(start, target, progress);
             yield return null;
         }
-        Destroy(gameObject);
+        skeletonController.agentState = EnemyAgent.AgentStates.Dead;
+
+        //Destroy(gameObject);
+        skeletonController.risen = false;
+        gameObject.SetActive(false);
     }
 }

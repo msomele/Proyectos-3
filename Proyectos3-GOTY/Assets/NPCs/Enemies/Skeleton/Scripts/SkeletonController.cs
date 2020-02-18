@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class SkeletonController : EnemyAgent
+public class SkeletonController : EnemyAgent , IPooledObject
 {
     public GameObject current_objective;
-    [HideInInspector]
-    public NavMeshAgent agent;
-
+    
     [Header("Speed")]
     public float minimum_Speed;
     public float maximun_Speed;
@@ -22,45 +20,68 @@ public class SkeletonController : EnemyAgent
     private Animator animator;
     [HideInInspector]
     public bool risen;
-    private float timeSpawning;
+
     private Rigidbody rb;
     // Start is called before the first frame update
-    void Start()
+
+    public void OnObjectSpawn()
     {
+        
         rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
+        animator.Play("Hidden");
+        
         nextAttack = 0f;
         agentState = AgentStates.Idle;
         range = meleeRange;
         risen = false;
         agent = GetComponent<NavMeshAgent>();
         animController = gameObject.GetComponent<SkeletonAnimationController>();
+        animController.attack = false;
         current_objective = GameObject.FindWithTag("CurrentEnemyObjective");
         current_destination = current_objective.transform.position;
         roar = RandomizeBool();
         timeSpawning = roar? 6.5f : 5f;
+
+        Debug.Log("HOLAAAAAAAAAAAAAAAAA");
+        GetComponent<Animator>().enabled = true;
+        GetComponent<SkeletonController>().enabled = true;
+        GetComponent<SkeletonAnimationController>().enabled = true;
+        GetComponent<AgentLinkMover>().enabled = true;
+        GetComponent<NavMeshAgent>().isStopped = false;
+
+        SkinnedMeshRenderer[] childrenRenderer = GetComponentsInChildren<SkinnedMeshRenderer>();
+        foreach (var r in childrenRenderer)
+        {
+            r.material.SetFloat("Dissolve", 0);
+        }
+        GetComponent<SkeletonRagdoll>().setRigidBodyState(true);
+        GetComponent<SkeletonRagdoll>().setCollidersState(false);
+        GetComponent<SkeletonRagdoll>().currentDisolveValue = 0f;
         StartCoroutine(RiseFormTheDead());
     }
 
     // Update is called once per frame
     void Update()
     {
-        current_destination = current_objective.transform.position;
-        if (risen)
-        {
-            SetDestinationPoint(current_destination);
-            if (IsObjectiveOnAttackRange(range))
+        if(agentState != AgentStates.Dead) {
+            current_destination = current_objective.transform.position;
+            if (risen && agentState != AgentStates.Ragdolled)
             {
-                StopChasing();
-                nextAttack += Time.time;
-                if (nextAttack >= attackRate)
+                SetDestinationPoint(current_destination);
+                if (IsObjectiveOnAttackRange(range))
                 {
-                    nextAttack = 0f;
-                    Attack();
+                    StopChasing();
+                    nextAttack += Time.time;
+                    if (nextAttack >= attackRate)
+                    {
+                        nextAttack = 0f;
+                        Attack();
+                    }
+                }else if(!animator.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
+                {
+                    ChaseTarget();
                 }
-            }else if(!animator.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
-            {
-                ChaseTarget();
             }
         }
     }
@@ -80,8 +101,8 @@ public class SkeletonController : EnemyAgent
 
     private bool IsObjectiveOnAttackRange(float range)
     {
-        float CurrentDistance = Vector3.Distance(transform.position, current_destination);
-        if (CurrentDistance <= range)
+        float currentDistance = Vector3.Distance(transform.position, current_destination);
+        if (currentDistance <= range)
         {
             return true;
         }
@@ -101,7 +122,7 @@ public class SkeletonController : EnemyAgent
     {
         if (IsObjectiveOnAttackRange(range))
         {
-            Debug.Log("Toma geromma");
+            Debug.Log("Ataque Esqueleto");
             /*
              if (current_objective.GetComponent<PlayerHealth>())
              {
@@ -122,13 +143,15 @@ public class SkeletonController : EnemyAgent
 
     public void ChaseTarget()
     {
-        animController.attack = false;
-        agentState = AgentStates.Running;
-        nextAttack = 0f;
-        SetDestinationPoint(current_destination);
-        agentState = AgentStates.Running;
-        agent.isStopped = false; 
-        agent.velocity = agent.desiredVelocity;
+        if (agentState != AgentStates.Ragdolled)
+        {
+            animController.attack = false;
+            agentState = AgentStates.Running;
+            nextAttack = 0f;
+            SetDestinationPoint(current_destination);
+            agent.isStopped = false;
+            agent.velocity = agent.desiredVelocity;
+        }
     }
 
     public void StopChasing()
@@ -150,18 +173,7 @@ public class SkeletonController : EnemyAgent
     {
         yield return new WaitForSeconds(timeSpawning);
         SetDestinationPoint(current_destination);
-        
         InitializeRandomSpeed(minimum_Speed, maximun_Speed);
         risen = true;
-    }
-
-    public void SetDestinationPoint(Vector3 Destination)
-    {
-        agent.SetDestination(Destination);
-    }
-
-    public void InitializeRandomSpeed(float min, float max)
-    {
-        agent.speed = Random.Range(min, max);
     }
 }
