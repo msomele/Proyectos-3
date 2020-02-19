@@ -1,251 +1,207 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
-public class PlayerController : MonoBehaviour 
+[System.Serializable]
+public class PlayerController : MonoBehaviour
 
 {
+//-----------------------STATS-----------------------------------//
+
+    public float attackDamage = 5;
+    public float hp = 100; 
+    
+
 //-----------------------ASSIGNABLES-----------------------------//
     [Header("Assignables")]
     [Tooltip("Camera assigned 2 the player")]
     public GameObject myCamera;
     [Tooltip("Players rigidbody")]
     public Rigidbody rb;
-    [Tooltip("Layer Mask acting as floor, used for the looking")]
-    public LayerMask FloorLayer;
-    [HideInInspector]
-    public float hori, verti;
-    private Vector3 normalVector = Vector3.up;
 
 //-----------------------MOVEMENT-------------------------------//
     [Header("Movement")]
     [Tooltip("Speed assigned 2 the player")]
     public float speed;
-    [Tooltip("Maximum speed assigned 2 the player")]
-    public float maxSpeed = 20; 
-    [Tooltip("Maximum slope angle")]
-    public float maxSlopeAngle = 35f;
-    [Tooltip("Friction force applyed to the player")] 
-    public float counterMovement = 0.175f; 
-    [HideInInspector]
-    public float threshold = 0.01f;
-    private Vector3 moveInput;
-    private Vector3 moveVelocity;
+    [SerializeField][Tooltip("Input vector2")]
+    private float movingThreshold = 0.1f;
+    public Vector2 addVel;
+    float hori, verti;
+    //-----------------------LOOKING-------------------------------//
+    [Header("Looking")]
+    [SerializeField]
+    [Tooltip("Looking rotation euler verctor")]
+    private Vector3 lookingInput;
+    private float sensitivity = 120f;
     private Vector3 pointToLook;
-
-//--------------------JUMPING----------------------------------//
+    private float lookingThreshold = 0.1f;
+    private Quaternion rot;
+    private Quaternion current;
+    //--------------------JUMPING----------------------------------//
     [Header("Jumping")]
-    [Tooltip("Jump force assigned 2 the player")]
     public float jumpForce;
-    [Tooltip("Cooldown for players jump")]
-    public float jumpCooldown = 2f;
-    [Tooltip("Is the player jumping?")] 
-    public bool isJumping;
-    [Tooltip("Is the player grounded?")]
+    public float ownGravity = 10;
     public bool isGrounded;
-    [Tooltip("Is the player ready to jump?")]
-    public bool isReadyToJump = true;
-//-------------------------------------------------------------//
+    public bool jumpInput = false;
+    public bool wantJumpinNormal = false;
+    [SerializeField] private GameObject currentFloor;
+    RaycastHit hit;
+    //-------------------INPUTS-----------------------------------//
+    [Header("Inputs")]
+    public InputBarbarian controls;
+    public bool gamepadSelected;
+    public bool keyboardMouseSelected = true;
+    //------------------------CAMERA------------------------------//
+    [Header("Camera info")]
+    [SerializeField][Tooltip("Is this object visible to the camera?")]
+    private bool amIVisible = true;
 
-    public void Start()
-    {        
-        rb = rb.GetComponent<Rigidbody>();
-        myCamera.GetComponent<SmoothCameraMovement>().playerTransform = gameObject.transform;
-        
-        //Cursor Visibility
+    
 
-        Cursor.visible = false; 
+    private void OnEnable() => controls.Gameplay.Enable();
+    private void OnDisable() => controls.Gameplay.Disable();
 
-    }
-    public void Update()
+    void Awake()
     {
-        MyInput();
+        lookingInput = new Vector3();
+        controls = new InputBarbarian();
+        myCamera = GameObject.FindGameObjectWithTag("MainCamera");
+        myCamera.GetComponent<SmoothCameraMovement>().AddPlayer(gameObject);
+    }
+
+
+    public virtual void Start()
+    {        
+        rb = GetComponent<Rigidbody>();
+        Cursor.visible = false;
+        GetCurrentFloor();
+    }
+    public virtual void Update()
+    {
         Look();
              
     }
-    public void FixedUpdate()
+    public virtual void FixedUpdate()
     {
        Move();
+        
     }
 
-    /*  <Look()>
-    Crea un plano en +y, lanza un raycast desde la cam a dicho plano en función del puntero.El jugador rota hacia la dirección de dicho corte
-      en el caso de que el ratón se salga del plano, el jugador se quedará mirando al último punto.
-    */
+    /*  <Visibility>*/
+    private void OnBecameInvisible() => amIVisible = false;
+    private void OnBecameVisible() => amIVisible = true;
+
+
+    /*  <Look()>*/
 
     public void Look()
     {
-         myCamera.GetComponent<SmoothCameraMovement>().playerTransform = transform;
-        moveInput = new Vector3(hori, 0f, verti);
-        
-        moveVelocity = moveInput * speed;
-        Ray cameraRay = myCamera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
-        Plane groundPlane = new Plane(Vector3.up, Vector3.zero); 
-        float rayLength;
+        if (gamepadSelected) keyboardMouseSelected = false;
+        if (keyboardMouseSelected) gamepadSelected = false;
+        if (!gamepadSelected) keyboardMouseSelected = true;
+        if (!keyboardMouseSelected) gamepadSelected = true;
 
-        if (groundPlane.Raycast(cameraRay, out rayLength))
+        Vector2 lookValue;
+        var gamepad = Gamepad.current; 
+        if (gamepad != null && gamepadSelected && !keyboardMouseSelected)
         {
-            pointToLook = cameraRay.GetPoint(rayLength);
-            Debug.DrawLine(cameraRay.origin, pointToLook, Color.blue);
-            transform.LookAt(new Vector3(pointToLook.x, transform.position.y, pointToLook.z));
+            
+            lookValue = gamepad.rightStick.ReadValue();
+
+            if((lookValue.x >= lookingThreshold || lookValue.y >= lookingThreshold) || (lookValue.x <= -lookingThreshold || lookValue.y <= -lookingThreshold))
+                lookingInput = new Vector3(lookValue.x, 0, lookValue.y);
+            rot = Quaternion.LookRotation(lookingInput);
+            current = transform.rotation;
+
+            
+            transform.localRotation = Quaternion.Lerp(current, rot, sensitivity * Time.fixedDeltaTime);
+
+            
+
         }
         else
         {
-            transform.LookAt(new Vector3(pointToLook.x, transform.position.y, pointToLook.z));
-        }  
+            
+            if(keyboardMouseSelected)
+            {
+                Ray cameraRay = myCamera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
+                Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
+
+                if (groundPlane.Raycast(cameraRay, out float rayLength))
+                {
+                    pointToLook = cameraRay.GetPoint(rayLength);
+                    Debug.DrawLine(cameraRay.origin, pointToLook, Color.blue);
+                    transform.LookAt(new Vector3(pointToLook.x, transform.position.y, pointToLook.z));
+                }
+                else
+                {
+                    transform.LookAt(new Vector3(pointToLook.x, transform.position.y, pointToLook.z));
+                }
+                Debug.Log("M&Kbrd used");
+            }
+        }
+
+
     }
 
-    /* <Move()>
-    Hay que cambiarlo, ahora se mueve con velocity y lo ideal es que se moviera con fuerzas. Permite que el player se mueva y condiciona el salto.
-    */
-
+    /* <Move()>*/
     public void Move()
     {
-         rb.AddForce(Vector3.down * Time.deltaTime * 10);
-        Vector2 mag = FindVelRelativeToLook();
-        float xMag = mag.x;
-        float yMag = mag.y;
-        
-        CounterMovement(hori,verti,mag);
+        var gamepad = Gamepad.current;
+        if (gamepad != null && (gamepadSelected || !keyboardMouseSelected))
+        {
+            Vector2 movementInput = gamepad.leftStick.ReadValue();
+            hori = movementInput.x;
+            verti = movementInput.y;
+        }
+        if (gamepad == null || (!gamepadSelected || keyboardMouseSelected))
+        {
+            Vector2 movementInput = controls.Gameplay.Movement.ReadValue<Vector2>();
+            hori = movementInput.x;
+            verti = movementInput.y;
+        }
 
-        if (isReadyToJump && isJumping)
-            Jump();
-        
-        float maxSpeed = this.maxSpeed;
-        
-        if(hori > 0 && xMag > maxSpeed) hori = 0;
-        if(hori < 0 && xMag < -maxSpeed) hori = 0;
-        if(verti > 0 && yMag > maxSpeed) verti = 0;
-        if(verti < 0 && yMag < -maxSpeed) verti = 0; 
-        
-        float multiplier = 1f, multiplierV = 1f; 
+        addVel = new Vector2(hori, verti) * speed;
 
-        //moverse la mitad de rápido en el aire
-        if(!isGrounded)
-        {
-            multiplier = 0.5f;
-            multiplierV = 0.5f;
-        }
-        rb.AddForce(rb.transform.forward * verti * speed * Time.deltaTime * multiplierV * multiplier);
-        rb.AddForce(rb.transform.right * hori * speed * Time.deltaTime * multiplier);
+        if ((addVel.x >= movingThreshold || addVel.y >= movingThreshold) || (addVel.x <= -movingThreshold || addVel.y <= -movingThreshold))
+            rb.MovePosition(rb.position + new Vector3(addVel.x, 0, addVel.y) * speed * Time.fixedDeltaTime);
 
-    }
-    
-    /* <CounterMovement()>
-    Actúa de rozamiento propio, dado que no nos afectará el del escenario.
-    */
-    private void CounterMovement(float x, float y, Vector2 mag)
-    {
-         if(Mathf.Abs(mag.x) > threshold && Mathf.Abs(x) < 0.05f || (mag.x < -threshold && x > 0) || (mag.x > threshold && x <0))
-        {
-            rb.AddForce(speed * rb.transform.right * Time.deltaTime * -mag.x * counterMovement);
-        }
-        if(Mathf.Abs(mag.y) > threshold && Mathf.Abs(y) < 0.05f || (mag.y < -threshold && y > 0) || (mag.y > threshold && y <0))
-        {
-            rb.AddForce(speed * rb.transform.forward * Time.deltaTime * -mag.y * counterMovement);
-        }
-        
-        if (Mathf.Sqrt((Mathf.Pow(rb.velocity.x, 2) + Mathf.Pow(rb.velocity.z, 2))) > maxSpeed)
-        {
-            float fallspeed = rb.velocity.y;
-            Vector3 n = rb.velocity.normalized * maxSpeed;
-            rb.velocity = new Vector3(n.x, fallspeed, n.z);
-        }
 
     }
 
-    /* <FindVelRelativeToLook()>
-    Encuentra la velocidad relativa actual al vector.forward del player.
-    */
-    
-    public Vector2 FindVelRelativeToLook()
+    /* <Jump()>*/
+    public void Jump()
     {
-        float lookAngle = rb.transform.eulerAngles.y;
-        float moveAngle = Mathf.Atan2(rb.velocity.x, rb.velocity.z) * Mathf.Rad2Deg;
-
-        float u = Mathf.DeltaAngle(lookAngle,moveAngle);
-        float v = 90 - u;
-        float magnitude = rb.velocity.magnitude;
-        float yMag = magnitude * Mathf.Cos(u * Mathf.Deg2Rad);
-        float xMag = magnitude * Mathf.Cos(v * Mathf.Deg2Rad);
-
-        return new Vector2(xMag,yMag);
+        isGrounded = false;
+        rb.AddForce(transform.up * jumpForce, ForceMode.VelocityChange);
+        
     }
-    /* <MyInput()>
-    Simplemente guarda el input necesario por ahora; ampliable.
-    .*/
-    public void MyInput()
+
+    /* <GetCurrentFloor()>*/
+    void GetCurrentFloor() //get this shit activable and desactivable
     {
-        isJumping = Input.GetButton("Jump");
-        hori = Input.GetAxis("Horizontal");
-        verti = Input.GetAxis("Vertical");
-    }
-    /* <Jump()>
-    Todo lo necesario para que salte y prepare el salto rápidamente. 
-    */
-    private void Jump()
-    {
-        if(isGrounded && isReadyToJump)
+        if(wantJumpinNormal)
         {
-            isReadyToJump = false;
-            rb.AddForce(Vector2.up * jumpForce * 1.5f);
-            rb.AddForce(normalVector * jumpForce * 0.5f);
-
-            Vector3 velocity = rb.velocity;
-            if (rb.velocity.y < 0.5f)
-                rb.velocity = new Vector3(velocity.x, 0, velocity.z);
-            else if(rb.velocity.y > 0f)
+            if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit, Mathf.Infinity))
             {
-                rb.velocity = new Vector3(velocity.x, velocity.y / 2, velocity.z);
-            }
-            Invoke(nameof(ResetJump), jumpCooldown);
-        }
-    }
-
-    private void ResetJump()
-    {
-        isReadyToJump = true; 
-    }
-    private bool IsFloor(Vector3 v)
-    {
-        float angle = Vector3.Angle(Vector3.up, v);
-        return angle < maxSlopeAngle;
-    }
-    private void StopGrounded()
-    {
-        isGrounded = false; 
-    }
-
-    private bool CancellingGrounded;
-
-    private void OnCollisionStay(Collision col)
-    {
-        int layer = col.gameObject.layer;
-        if (FloorLayer != (FloorLayer | (1 << layer))) return;
-
-        for (int i = 0; i < col.contactCount; i++)
-        {
-            Vector3 normal = col.contacts[i].normal;
-            if(IsFloor(normal))
-            {
-                isGrounded = true;
-                CancellingGrounded = false;
-                normalVector = normal;
-                CancelInvoke(nameof(StopGrounded));
+                Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.down) * Mathf.Infinity, Color.cyan);
+                currentFloor = hit.transform.gameObject;
             }
         }
+        
+    }
+    
+   
 
-        if(!CancellingGrounded)
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.layer==8)
         {
-            CancellingGrounded = true;
-            Invoke(nameof(StopGrounded), Time.deltaTime * 3f);
+            isGrounded = true;
+            GetCurrentFloor();
         }
     }
-
-
-
-
 
 
 
