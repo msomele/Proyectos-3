@@ -24,7 +24,7 @@ public class BarbarianController : PlayerController
         if(Time.time - lastClickedTime > maxComboDelay)
             noOfClicks = 0;
 
-        Debug.Log("Time: " + Time.time);
+        //Debug.Log("Time: " + Time.time);
         
     }
     public override void FixedUpdate() 

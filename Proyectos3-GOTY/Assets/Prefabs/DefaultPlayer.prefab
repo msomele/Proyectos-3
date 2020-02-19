@@ -87,16 +87,19 @@ MonoBehaviour:
   speed: 3.5
   addVel: {x: 0, y: 0}
   lookingInput: {x: 0, y: 0, z: 0}
-  sensitivity: 120
   jumpForce: 10
   ownGravity: 22
   isGrounded: 0
   jumpInput: 0
   currentFloor: {fileID: 0}
+  gamepadSelected: 0
+  keyboardMouseSelected: 1
   amIVisible: 1
   barbarianAnimator: {fileID: 4911285951622680065}
+  lastClickedTime: 0
   noOfClicks: 0
   maxComboDelay: 1
+  isAttacking: 0
 --- !u!114 &4400559916070431816
 MonoBehaviour:
   m_ObjectHideFlags: 0
