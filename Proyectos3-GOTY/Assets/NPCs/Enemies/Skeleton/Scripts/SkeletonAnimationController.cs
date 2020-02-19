@@ -9,14 +9,14 @@ public class SkeletonAnimationController : MonoBehaviour
     private Rigidbody rb;
     private NavMeshAgent navMeshAgent;
     private SkeletonController skeletonController;
+    private EnemyAgent enemyAget;
     private bool once = false;
-    private bool _traversingLink;
-    private OffMeshLinkData _currLink;
-    private Animation jumpAnimation;
+    [HideInInspector]
+    public bool attack;
     // Start is called before the first frame update
     void Start()
     {
-        jumpAnimation = GetComponent<Animation>();
+        enemyAget = GetComponent<EnemyAgent>();
         skeletonController = GetComponent<SkeletonController>();
         navMeshAgent = GetComponent<NavMeshAgent>();
         rb = GetComponent<Rigidbody>();
@@ -41,7 +41,6 @@ public class SkeletonAnimationController : MonoBehaviour
             once = true;
         }
         animator.SetFloat("Speed", navMeshAgent.desiredVelocity.magnitude);
-        
-
+        animator.SetBool("Attack", attack);
     }
 }
