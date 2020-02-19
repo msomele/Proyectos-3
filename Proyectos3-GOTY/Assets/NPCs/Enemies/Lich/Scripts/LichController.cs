@@ -7,7 +7,6 @@ public class LichController : EnemyAgent
 {
     public Transform[] summoningPositions;
     public int maxSummons;
-    public int currentSummons;
     public GameObject SummogPrefab;
     public GameObject current_objective;
     public float attackRange;
@@ -18,40 +17,21 @@ public class LichController : EnemyAgent
     private bool spawned;
     private Rigidbody rb;
     private bool summoning;
-
-    /*----------Objet Pooling-----------------*/
-    [System.Serializable]
-    public class Pool
-    {
-        public string tag;
-        public GameObject prefab;
-        public int size;
-    }
-    public List<Pool> pools;
-    public Dictionary<string, Queue<GameObject>> poolDictionary;
+    public float summongCooldown;
+    public float lastSummoned;
+    public int summongAmount;
+    public GameObject[] skeleton;
+    bool fistSpawn = true;
+    Animator lichAnimator;
 
     void Start()
     {
-        poolDictionary = new Dictionary<string, Queue<GameObject>>();
-        foreach (Pool pool in pools)
+        lichAnimator = GetComponent<Animator>();
+        for (int i = 0; i < 4; i++)
         {
-            Queue<GameObject> objectPool = new Queue<GameObject>();
-            for (int i = 0; i < pool.size; i++)
-            {
-                GameObject obj = Instantiate(pool.prefab);
-                
-                if (obj.GetComponent<SkeletonController>())
-                {
-                    obj.GetComponent<SkeletonController>().agentState = AgentStates.Dead;
-                }
-                
-                obj.SetActive(false);
-                objectPool.Enqueue(obj);
-            }
-
-            poolDictionary.Add(pool.tag, objectPool);
-
+           skeleton[i] = SummogPrefab;
         }
+        lastSummoned = 0f;
         summoning = false;
         spawned = false;
         timeSpawning = 2f;
@@ -74,6 +54,10 @@ public class LichController : EnemyAgent
 
     private void Update()
     {
+        //ANIMATIONS
+        lichAnimator.SetFloat("Speed", agent.desiredVelocity.magnitude);
+        lichAnimator.SetBool("Summoning", summoning);
+        lastSummoned += Time.deltaTime;
         current_destination = current_objective.transform.position;
         if (spawned)
         {
@@ -84,40 +68,93 @@ public class LichController : EnemyAgent
                 Attack
                 */
             }
-            if (IsObjectiveOnSpawningRange(spawningRange))
+            if (IsObjectiveOnSpawningRange(spawningRange) && lastSummoned >= summongCooldown)
             {
-                if (currentSummons < maxSummons)
-                {
-                    SummongSkeletons();
-                }
                 
+                SummongSkeletons();
             }
         }
     }
+
+    private int CheckNumSkeletonsToSpawn()
+    {
+        int numSkeletonsToSpawn = 0;
+        for (int i = 0; i < maxSummons; i++)
+        {
+            if (skeleton[i] == null)
+            {
+                //numSkeletonsToSpawn++;
+            }
+            else { 
+                if (skeleton[i].GetComponent<SkeletonController>().agentState == AgentStates.Ragdolled || skeleton[i].GetComponent<SkeletonController>().agentState == AgentStates.UnSpawned)
+                {
+                    numSkeletonsToSpawn++;
+                }
+            }
+
+        }
+        Debug.Log(numSkeletonsToSpawn);
+        return numSkeletonsToSpawn;
+    }
+    
     private void SummongSkeletons()
     {
-        Debug.Log("Summoning");
-        int summongAmount = 0;
-        currentSummons = 0;
-        foreach (GameObject skeleton in poolDictionary["Skeleton"])
+        bool ActualySummoned = false;
+        if (fistSpawn)
         {
-            if (skeleton.GetComponent<SkeletonController>().agentState == AgentStates.Dead)
+            Debug.Log("Check");
+            summongAmount = 4;
+            if (summongAmount <= maxSummons && summongAmount > 0)
             {
-                summongAmount++;
+                for (int i = 0; i < summongAmount; i++)
+                {
+                    //skeleton[i] = SummogPrefab;
+                    skeleton[i] = Instantiate(SummogPrefab, summoningPositions[i].position, summoningPositions[i].rotation);
+                    lastSummoned = 0f;
+                }
+                summoning = true;
+                RotateTowards(current_destination);
+                agent.isStopped = true;
+                agent.velocity = Vector3.zero;
+                StartCoroutine(ResumeChasing(4f));
+                summongAmount = 0;
             }
+            fistSpawn = false;
         }
-
-        //int summongAmountt  = maxSummons - currentSummons;
-        for (int i = 0; i < summongAmount; i++)
+        else
         {
-            SpawnFromPool("Skeleton", summoningPositions[i].position, summoningPositions[i].rotation);
+            Debug.Log("Check");
+            summongAmount = CheckNumSkeletonsToSpawn();
+            for (int i = 0; i < maxSummons; i++)
+            {
+                if (skeleton[i] == null)
+                {
+                    skeleton[i] = Instantiate(SummogPrefab, summoningPositions[i].position, summoningPositions[i].rotation);
+                    ActualySummoned = true;
+                    summongAmount -= 1;
+                }
+            }
+            if (summongAmount <= maxSummons && summongAmount > 0)
+            {
+
+                for (int i = 0; i < summongAmount; i++)
+                {
+                    skeleton[i] = Instantiate(SummogPrefab, summoningPositions[i].position, summoningPositions[i].rotation);
+                    ActualySummoned = true;
+                    lastSummoned = 0f;
+                }
+            }
+            if (ActualySummoned)
+            {
+                summoning = true;
+                RotateTowards(current_destination);
+                agent.isStopped = true;
+                agent.velocity = Vector3.zero;
+                StartCoroutine(ResumeChasing(4f));
+                summongAmount = 0;
+            }
+
         }
-        summoning = true;
-        RotateTowards(current_destination);
-        agent.isStopped = true;
-        agent.velocity = Vector3.zero;
-        StartCoroutine(ResumeChasing(4f));
-        summongAmount = 0;
     }
 
     private bool IsObjectiveOnAttackRange(float range)
@@ -154,29 +191,6 @@ public class LichController : EnemyAgent
         InitializeRandomSpeed(minimum_Speed, maximun_Speed);
         spawned = true;
 
-    }
-
-    public GameObject SpawnFromPool(string tag, Vector3 position, Quaternion rotation)
-    {
-        if (!poolDictionary.ContainsKey(tag))
-        {
-            Debug.LogWarning("Pool with tag" + tag + "does not exist.");
-            return null;
-        }
-
-        GameObject objectToSpawn = poolDictionary[tag].Dequeue();
-        objectToSpawn.SetActive(true);
-        objectToSpawn.transform.position = position;
-        objectToSpawn.transform.rotation = rotation;
-
-        IPooledObject pooledObj = objectToSpawn.GetComponent<IPooledObject>();
-        if (pooledObj != null)
-        {
-            pooledObj.OnObjectSpawn();
-        }
-
-        poolDictionary[tag].Enqueue(objectToSpawn);
-        return objectToSpawn;
     }
 
     private void OnDrawGizmos()

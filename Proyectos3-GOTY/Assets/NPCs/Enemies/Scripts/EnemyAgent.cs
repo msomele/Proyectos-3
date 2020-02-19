@@ -17,7 +17,8 @@ public class EnemyAgent : MonoBehaviour
         Dead,
         Attack,
         Idle,
-        Ragdolled
+        Ragdolled,
+        UnSpawned
     }
     //[HideInInspector]
     public AgentStates agentState;

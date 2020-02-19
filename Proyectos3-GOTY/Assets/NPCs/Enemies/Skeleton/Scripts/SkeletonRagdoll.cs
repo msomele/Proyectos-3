@@ -13,21 +13,8 @@ public class SkeletonRagdoll : MonoBehaviour
 
     void Start()
     {
-        GetComponent<Animator>().enabled = true;
-        GetComponent<SkeletonController>().enabled = true;
-        GetComponent<SkeletonAnimationController>().enabled = true;
-        GetComponent<AgentLinkMover>().enabled = true;
-        GetComponent<NavMeshAgent>().isStopped = false;
-
         skeletonController = GetComponent<SkeletonController>();
-        dissolveMaterial.SetFloat("Vector1_FEFF47F1", 0f);
-        currentDisolveValue = 0f;
         childrenRenderer = GetComponentsInChildren<SkinnedMeshRenderer>();
-        foreach (var r in childrenRenderer)
-        {
-            r.material.SetFloat("Dissolve", 0f);
-        }
-
         setRigidBodyState(true);
         setCollidersState(false);
     }
@@ -47,7 +34,6 @@ public class SkeletonRagdoll : MonoBehaviour
         setCollidersState(true);
         setRigidBodyState(false);
         GetComponent<Animator>().enabled = false;
-        //GetComponent<SkeletonController>().enabled = false;
         GetComponent<SkeletonAnimationController>().enabled = false;
         GetComponent<AgentLinkMover>().enabled = false;
         skeletonController.agent.velocity = Vector3.zero;
@@ -91,8 +77,8 @@ public class SkeletonRagdoll : MonoBehaviour
         }
         skeletonController.agentState = EnemyAgent.AgentStates.Dead;
 
-        //Destroy(gameObject);
+        Destroy(gameObject);
         skeletonController.risen = false;
-        gameObject.SetActive(false);
+        //gameObject.SetActive(false);
     }
 }

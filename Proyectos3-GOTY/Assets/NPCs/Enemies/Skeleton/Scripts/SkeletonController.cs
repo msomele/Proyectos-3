@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class SkeletonController : EnemyAgent , IPooledObject
+public class SkeletonController : EnemyAgent
 {
     public GameObject current_objective;
     
@@ -24,7 +24,8 @@ public class SkeletonController : EnemyAgent , IPooledObject
     private Rigidbody rb;
     // Start is called before the first frame update
 
-    public void OnObjectSpawn()
+
+    void Start()
     {
         
         rb = GetComponent<Rigidbody>();
@@ -43,7 +44,6 @@ public class SkeletonController : EnemyAgent , IPooledObject
         roar = RandomizeBool();
         timeSpawning = roar? 6.5f : 5f;
 
-        Debug.Log("HOLAAAAAAAAAAAAAAAAA");
         GetComponent<Animator>().enabled = true;
         GetComponent<SkeletonController>().enabled = true;
         GetComponent<SkeletonAnimationController>().enabled = true;
