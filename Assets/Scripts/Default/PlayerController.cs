@@ -84,8 +84,12 @@ public class PlayerController : MonoBehaviour
     }
     public virtual void FixedUpdate()
     {
-       Move();
-        
+        Move();
+        jumpInput = controls.Gameplay.Jump.triggered;
+        if (isGrounded && jumpInput)
+            Jump();
+        if (!isGrounded && currentFloor != null)
+            rb.AddForce(-currentFloor.transform.up * ownGravity);
     }
 
     /*  <Visibility>*/
