@@ -68,9 +68,8 @@ public class LichController : EnemyAgent
                 Attack
                 */
             }
-            if (IsObjectiveOnSpawningRange(spawningRange) && lastSummoned >= summongCooldown)
-            {
-                
+            if (IsObjectiveOnSpawningRange(spawningRange) && lastSummoned >= summongCooldown && !agent.isOnOffMeshLink)
+            {  
                 SummongSkeletons();
             }
         }
@@ -93,7 +92,7 @@ public class LichController : EnemyAgent
             }
 
         }
-        Debug.Log(numSkeletonsToSpawn);
+        //Debug.Log(numSkeletonsToSpawn);
         return numSkeletonsToSpawn;
     }
     
@@ -102,7 +101,7 @@ public class LichController : EnemyAgent
         bool ActualySummoned = false;
         if (fistSpawn)
         {
-            Debug.Log("Check");
+            //Debug.Log("Check");
             summongAmount = 4;
             if (summongAmount <= maxSummons && summongAmount > 0)
             {
