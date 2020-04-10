@@ -6,7 +6,7 @@ using UnityEngine.Events;
 public enum AttackType { heavy = 2, light = 1, lighter = 0 }
 public class BarbarianCombos : MonoBehaviour
 {
-
+    /*
     [Header("Inputs test")]
     public KeyCode heavyKey;
     public KeyCode lightKey;
@@ -217,4 +217,5 @@ public class BarbarianCombos : MonoBehaviour
             currentInput = 0; 
         }
     }
+    */
 }
