@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: WatterCartoon
+  m_Shader: {fileID: -6465566751694194690, guid: 230f36c1826babd4c9e95e767bc2dfe0,
+    type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Floats:
+    - Vector1_73E6207F: 1
+    - Vector1_7D70CBE2: -34.48
+    - Vector1_98B15EAA: 5
+    - Vector1_A88B7319: 0.5
+    - Vector1_BCFEC71: 0.5
+    - Vector1_C08B34F7: 0.68
+    - Vector1_E84B059A: 0.75
+    - Vector1_F349B851: 1.1
+    - Vector1_F987C5EC: 1.3
+    m_Colors:
+    - Color_6BB7DA9E: {r: 0.2569865, g: 0.6224476, b: 0.990566, a: 0}
+    - Color_B957EB58: {r: 0.41798684, g: 0.6942524, b: 0.8773585, a: 0}
+    - Color_E5403B8E: {r: 0.2666667, g: 0.972549, b: 1.498039, a: 0}
+    - Vector2_DAB341BA: {r: 0.05, g: -0.01, b: 0, a: 0}

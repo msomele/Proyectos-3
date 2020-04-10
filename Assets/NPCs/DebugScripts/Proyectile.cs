@@ -6,6 +6,7 @@ public class Proyectile : MonoBehaviour
 {
     public float speed;
     private Rigidbody rb;
+    public float proyectileDamage;
     // Start is called before the first frame update
     void Start()
     {
@@ -30,7 +31,28 @@ public class Proyectile : MonoBehaviour
             }
             explode();
         }
+
         
+        if (collision.transform.GetComponent<LichController>())
+        {
+            LichController lich = collision.transform.GetComponent<LichController>();
+            if (lich != null)
+            {
+                lich.TakeDamage(proyectileDamage);
+            }
+            explode();
+        }
+
+        if (collision.transform.GetComponent<GolemController>())
+        {
+            GolemController golem = collision.transform.GetComponent<GolemController>();
+            if (golem != null)
+            {
+                golem.TakeDamage(proyectileDamage);
+            }
+            explode();
+        }
+
         Destroy(gameObject);
     }
     void explode()

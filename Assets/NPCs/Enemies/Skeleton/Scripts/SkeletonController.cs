@@ -31,7 +31,6 @@ public class SkeletonController : EnemyAgent
         rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
         animator.Play("Hidden");
-        
         nextAttack = 0f;
         agentState = AgentStates.Idle;
         range = meleeRange;

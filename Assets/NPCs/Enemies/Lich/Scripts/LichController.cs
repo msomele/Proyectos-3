@@ -1,10 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class LichController : EnemyAgent
 {
+    public ParticleSystem ParticleBody;
     public Transform[] summoningPositions;
     public int maxSummons;
     public GameObject SummogPrefab;
@@ -21,12 +23,21 @@ public class LichController : EnemyAgent
     public float lastSummoned;
     public int summongAmount;
     public GameObject[] skeleton;
+    public GameObject bulletPrefab;
     bool fistSpawn = true;
     Animator lichAnimator;
+    SkinnedMeshRenderer[] childrenRenderer;
+    private float currentDisolveValue;
+    public GameObject bulletSpawnPostion;
+    private float nextDamageEvent;
 
     void Start()
     {
+        nextDamageEvent = 0f;
+        currentDisolveValue = 1f;
+        childrenRenderer = GetComponentsInChildren<SkinnedMeshRenderer>();
         lichAnimator = GetComponent<Animator>();
+        lichAnimator.SetBool("Die", false);
         for (int i = 0; i < 4; i++)
         {
            skeleton[i] = SummogPrefab;
@@ -41,7 +52,10 @@ public class LichController : EnemyAgent
         agent = GetComponent<NavMeshAgent>();
         current_objective = GameObject.FindWithTag("CurrentEnemyObjective");
         current_destination = current_objective.transform.position;
+        StartCoroutine(Materialize(1f));
         StartCoroutine(Spawn());
+        agent.stoppingDistance = attackRange - 0.5f;
+        ParticleBody.Stop();
     }
 
     private void RotateTowards(Vector3 target)
@@ -51,9 +65,10 @@ public class LichController : EnemyAgent
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * agent.angularSpeed);
     }
 
-
     private void Update()
     {
+        RotateTowards(current_destination);
+        nextDamageEvent += Time.deltaTime;
         //ANIMATIONS
         lichAnimator.SetFloat("Speed", agent.desiredVelocity.magnitude);
         lichAnimator.SetBool("Summoning", summoning);
@@ -62,18 +77,38 @@ public class LichController : EnemyAgent
         if (spawned)
         {
             SetDestinationPoint(current_destination);
-            if (IsObjectiveOnAttackRange(range) && !summoning)
+            if (IsObjectiveOnAttackRange(range) && !summoning && nextDamageEvent > attackRate)
             {
-                /*
-                Attack
-                */
+                nextDamageEvent = 0f;
+                Attack();
             }
-            if (IsObjectiveOnSpawningRange(spawningRange) && lastSummoned >= summongCooldown)
-            {
-                
+
+            if (IsObjectiveOnSpawningRange(spawningRange) && lastSummoned >= summongCooldown && !agent.isOnOffMeshLink)
+            {  
                 SummongSkeletons();
             }
         }
+        foreach (var r in childrenRenderer)
+        {
+            r.material.SetFloat("Vector1_FEFF47F1", currentDisolveValue);
+        }
+    }
+
+    private void Attack()
+    {
+        if (hp >0 )
+        {
+            RotateTowards(current_destination);
+            lichAnimator.CrossFade("Attack", 0.3f);
+            agent.isStopped = true;
+            agent.velocity = Vector3.zero;
+            StartCoroutine(ResumeChasing(2f));
+        }
+    }
+
+    public void FireFireball()
+    {
+        Instantiate(bulletPrefab, bulletSpawnPostion.transform.position, bulletSpawnPostion.transform.rotation);
     }
 
     private int CheckNumSkeletonsToSpawn()
@@ -93,7 +128,7 @@ public class LichController : EnemyAgent
             }
 
         }
-        Debug.Log(numSkeletonsToSpawn);
+        //Debug.Log(numSkeletonsToSpawn);
         return numSkeletonsToSpawn;
     }
     
@@ -102,7 +137,7 @@ public class LichController : EnemyAgent
         bool ActualySummoned = false;
         if (fistSpawn)
         {
-            Debug.Log("Check");
+            //Debug.Log("Check");
             summongAmount = 4;
             if (summongAmount <= maxSummons && summongAmount > 0)
             {
@@ -183,7 +218,6 @@ public class LichController : EnemyAgent
         }
     }
 
-
     IEnumerator Spawn()
     {   
         yield return new WaitForSeconds(timeSpawning);
@@ -202,6 +236,29 @@ public class LichController : EnemyAgent
         Gizmos.DrawWireSphere(transform.position, range);
     }
 
+    public void TakeDamage(float damageAmount)
+    {
+        if (hp > 0f)
+        {
+            lichAnimator.CrossFade("Take Damage", 0.2f);
+            hp -= damageAmount;
+            if (hp <= 0f)
+            {
+                Die();
+            }
+        }
+    }
+
+    private void Die()
+    {
+        ParticleBody.Stop();
+        lichAnimator.CrossFade("Die", 0.2f);
+        lichAnimator.SetBool("Die", true);
+        StartCoroutine(Disolve(2f)); 
+        agent.isStopped = true;
+        agent.velocity = Vector3.zero;
+    }
+
     IEnumerator ResumeChasing(float delay)
     {
         yield return new WaitForSeconds(delay);
@@ -209,5 +266,37 @@ public class LichController : EnemyAgent
         agent.isStopped = false;
         agent.velocity = agent.desiredVelocity;
         summoning = false;
+    }
+
+    IEnumerator Disolve(float waitTime)
+    {
+        float duration = 3f;
+        int target = 1;
+        float start = 0f;
+        yield return new WaitForSeconds(waitTime);
+        for (float timer = 0; timer < duration; timer += Time.deltaTime)
+        {
+            float progress = timer / duration;
+            currentDisolveValue = Mathf.Lerp(start, target, progress);
+            yield return null;
+        }
+        agentState = EnemyAgent.AgentStates.Dead;
+
+        Destroy(gameObject);
+    }
+
+    IEnumerator Materialize(float waitTime)
+    {
+        float duration = 1f;
+        int target = 0;
+        float start = 1f;
+        yield return new WaitForSeconds(waitTime);
+        for (float timer = 0; timer < duration; timer += Time.deltaTime)
+        {
+            float progress = timer / duration;
+            currentDisolveValue = Mathf.Lerp(start, target, progress);
+            yield return null;
+        }
+        ParticleBody.Play();
     }
 }

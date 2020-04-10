@@ -38,7 +38,6 @@ public class SkeletonRagdoll : MonoBehaviour
         GetComponent<AgentLinkMover>().enabled = false;
         skeletonController.agent.velocity = Vector3.zero;
         skeletonController.agent.isStopped = true;
-
     }
 
     public void setRigidBodyState(bool state)
@@ -63,8 +62,7 @@ public class SkeletonRagdoll : MonoBehaviour
     }
 
     IEnumerator Disolve(float waitTime)
-    {
-        
+    {  
         float duration = 2f;
         int target = 1;
         float start = 0f;
@@ -79,6 +77,5 @@ public class SkeletonRagdoll : MonoBehaviour
 
         Destroy(gameObject);
         skeletonController.risen = false;
-        //gameObject.SetActive(false);
     }
 }
