@@ -24,10 +24,13 @@ public class SkeletonController : EnemyAgent
     private Rigidbody rb;
     // Start is called before the first frame update
 
-
-    void Start()
+    private void OnEnable()
     {
-        
+        if (current_objective == null)
+        {
+            current_objective = GameObject.FindWithTag("CurrentEnemyObjective");
+            current_destination = current_objective.transform.position;
+        }
         rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
         animator.Play("Hidden");
@@ -38,8 +41,46 @@ public class SkeletonController : EnemyAgent
         agent = GetComponent<NavMeshAgent>();
         animController = gameObject.GetComponent<SkeletonAnimationController>();
         animController.attack = false;
-        current_objective = GameObject.FindWithTag("CurrentEnemyObjective");
-        current_destination = current_objective.transform.position;
+        //current_objective = GameObject.FindWithTag("CurrentEnemyObjective");
+        //current_destination = current_objective.transform.position;
+        roar = RandomizeBool();
+        timeSpawning = roar ? 6.5f : 5f;
+
+        GetComponent<Animator>().enabled = true;
+        GetComponent<SkeletonController>().enabled = true;
+        GetComponent<SkeletonAnimationController>().enabled = true;
+        GetComponent<AgentLinkMover>().enabled = true;
+        GetComponent<NavMeshAgent>().isStopped = false;
+
+        SkinnedMeshRenderer[] childrenRenderer = GetComponentsInChildren<SkinnedMeshRenderer>();
+        foreach (var r in childrenRenderer)
+        {
+            r.material.SetFloat("Dissolve", 0);
+        }
+        GetComponent<SkeletonRagdoll>().setRigidBodyState(true);
+        GetComponent<SkeletonRagdoll>().setCollidersState(false);
+        GetComponent<SkeletonRagdoll>().currentDisolveValue = 0f;
+        StartCoroutine(RiseFormTheDead());
+    }
+
+    void Start()
+    {
+        if(current_objective == null ){
+            current_objective = GameObject.FindWithTag("CurrentEnemyObjective");
+            current_destination = current_objective.transform.position;
+        }
+        rb = GetComponent<Rigidbody>();
+        animator = GetComponent<Animator>();
+        animator.Play("Hidden");
+        nextAttack = 0f;
+        agentState = AgentStates.Idle;
+        range = meleeRange;
+        risen = false;
+        agent = GetComponent<NavMeshAgent>();
+        animController = gameObject.GetComponent<SkeletonAnimationController>();
+        animController.attack = false;
+        //current_objective = GameObject.FindWithTag("CurrentEnemyObjective");
+        //current_destination = current_objective.transform.position;
         roar = RandomizeBool();
         timeSpawning = roar? 6.5f : 5f;
 
@@ -63,7 +104,7 @@ public class SkeletonController : EnemyAgent
     // Update is called once per frame
     void Update()
     {
-        if(agentState != AgentStates.Dead) {
+        if (agentState != AgentStates.Dead) {
             current_destination = current_objective.transform.position;
             if (risen && agentState != AgentStates.Ragdolled)
             {
@@ -121,13 +162,17 @@ public class SkeletonController : EnemyAgent
     {
         if (IsObjectiveOnAttackRange(range))
         {
-            Debug.Log("Ataque Esqueleto");
+            //Debug.Log("Ataque Esqueleto");
             /*
              if (current_objective.GetComponent<PlayerHealth>())
              {
                  current_objective.GetComponent<PlayerHealth>().DeductHealth(attack_damage);
              }
             */
+            if (current_objective.GetComponent<DestructibleObjective>())
+            {
+                current_objective.GetComponent<DestructibleObjective>().TakeDamage(attack_damage);
+            }
         }
         else
         {

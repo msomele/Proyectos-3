@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - CurrentEnemyObjective
+  - Skeleton
   layers:
   - Default
   - TransparentFX
@@ -20,7 +21,7 @@ TagManager:
   - Barbarian_Helmet
   - Barbarian_Hair
   - EnemiesLayer
-  - 
+  - ObjectiveLayer
   - 
   - 
   - 
