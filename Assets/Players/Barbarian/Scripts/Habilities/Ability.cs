@@ -7,6 +7,7 @@ public abstract class Ability : ScriptableObject  //abstracta porque funciones q
     public string aName = "";
     public Sprite aSprite;
     public AudioClip aSound;
+
     public float aBaseCd = 1f;
 
     

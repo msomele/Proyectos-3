@@ -13,15 +13,14 @@ public class PlayerController : MonoBehaviour
 
     //-----------------------ASSIGNABLES-----------------------------//
     [Header("Assignables")]
-    [Tooltip("Camera assigned 2 the player")]
-    public GameObject myCamera;
-    [Tooltip("Players rigidbody")]
-    public Rigidbody rb;
+    [HideInInspector] public GameObject myCamera;
+    [HideInInspector] public Rigidbody rb;
+    public float hp = 140;
 
     //-----------------------MOVEMENT-------------------------------//
     [Header("Movement")]
     [Tooltip("Speed assigned 2 the player")]
-    public float speed;
+    [HideInInspector] public float speed;
     [SerializeField][Tooltip("Input vector2")]
     private float movingThreshold = 0.1f;
     private Vector2 addVel;
@@ -37,7 +36,9 @@ public class PlayerController : MonoBehaviour
     //-------------------INPUTS-----------------------------------//
     [Header("Inputs")]
 
-    [SerializeField] private int playerIndex = 0; 
+    [SerializeField] private int playerIndex = 0;
+    public InputHolders inputH;
+    /*
     public Vector2 movementInput;
     public Vector2 lookInput;
     public float attackInput;
@@ -45,6 +46,7 @@ public class PlayerController : MonoBehaviour
     public float ability2Input;
     public float ability3Input;
     public float ability4Input;
+    */
 
     //------------------------CAMERA------------------------------//
     [Header("Camera info")]
@@ -59,15 +61,15 @@ public class PlayerController : MonoBehaviour
     {
         myCamera = GameObject.FindGameObjectWithTag("MainCamera");
         myCamera.GetComponent<SmoothCameraMovement>().AddPlayer(gameObject);
+        inputH = gameObject.GetComponentInChildren<InputHolders>();
     }
+    
 
-    public virtual void Initialize()
+    public virtual void Start()
     {
         rb = GetComponent<Rigidbody>();
         Cursor.visible = false;
     }
-
-    public virtual void Start() { }
     public virtual void Update()
     {
         Look();
@@ -78,6 +80,9 @@ public class PlayerController : MonoBehaviour
     }
 
     /* <InputsSetters>*/
+
+    public int GetPlayerIndex() { return playerIndex; }
+    /*
     public void SetMoveInputVector(Vector2 move) => movementInput = move;
     public void SetLookInputVector(Vector2 look) => lookInput = look;
     public void SetAttackInputVector(float attack) => attackInput = attack;
@@ -85,9 +90,7 @@ public class PlayerController : MonoBehaviour
     public void SetAbility2InputVector(float ability2) => ability2Input = ability2;
     public void SetAbility3InputVector(float ability3) => ability3Input = ability3;
     public void SetAbility4InputVector(float ability4) => ability4Input = ability4;
-    public int GetPlayerIndex() { return playerIndex; }
-
-
+    */
 
     /*  <Visibility>*/
     private void OnBecameInvisible() => amIVisible = false;
@@ -98,10 +101,10 @@ public class PlayerController : MonoBehaviour
     public void Look()
     {   
         
-        if ((lookInput.x >= lookingThreshold || lookInput.y >= lookingThreshold) || (lookInput.x <= -lookingThreshold || lookInput.y <= -lookingThreshold))
+        if ((inputH.lookInput.x >= lookingThreshold || inputH.lookInput.y >= lookingThreshold) || (inputH.lookInput.x <= -lookingThreshold || inputH.lookInput.y <= -lookingThreshold))
         {
            
-                rot = Quaternion.LookRotation(new Vector3(lookInput.x, 0, lookInput.y));
+                rot = Quaternion.LookRotation(new Vector3(inputH.lookInput.x, 0, inputH.lookInput.y));
                 transform.rotation = Quaternion.Lerp(current, rot, sensitivity * Time.fixedDeltaTime);
                 current = transform.rotation; 
         }
@@ -115,7 +118,7 @@ public class PlayerController : MonoBehaviour
     /* <Move()>*/
     public void Move()
     {
-        addVel = new Vector2(movementInput.x, movementInput.y) * speed;
+        addVel = new Vector2(inputH.movementInput.x, inputH.movementInput.y) * speed;
 
         if ((addVel.x >= movingThreshold || addVel.y >= movingThreshold) || (addVel.x <= -movingThreshold || addVel.y <= -movingThreshold))
             rb.MovePosition(rb.position + new Vector3(addVel.x, 0, addVel.y) * Time.fixedDeltaTime);

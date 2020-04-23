@@ -1,40 +1,62 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BarbarianController : PlayerController 
  //Con heredar de PlayerController y en: Start, Update y FixedUpdate poner base.tatata() ya se mueve con el defaultSet.
 {
 
-    public Animator barbarianAnimator;
+    [HideInInspector] public Animator barbarianAnimator;
     public LayerMask enemyLayers;
+    public LayerMask explosionLayers;
 
     public Transform attackPointMin, attackPointMax;
 
-    public float attackRange = 0.5f;
-    public float attackDamage = 20;
-    public float attackRate = 2f; //nº of attacks/sg
+    [HideInInspector] public float attackRange = 0.5f;
+    [HideInInspector] public float attackDamage = 20;
+    [HideInInspector] public float attackRate = 2f; //nº of attacks/sg
 
-    float nextAttackTime = 0f;
-    float nextAbility1Time = 5f;
-    float ability1Rate = 0.20f;
+    [HideInInspector] float nextAttackTime = 0f;
+    [HideInInspector] float nextAbility1Time = 5f;
+    [HideInInspector] float ability1Rate = 0.20f;
+    [HideInInspector] int aux = 0;
+    public AudioClip aa1;
+    public AudioClip aa2;
+
+    //-----------------------HEALING-------------------------------//
+    public float baseHealingSpeed = 0.5f;
+    public float timePassedSinceHitten = 0;
+    public float maxTimeSinceHitten;
+    public HealthRestoring hpRestoring;
+    /************MAKE UPDATE TO hpRestoring.maxHealth WITH hp VARIABLE WHEN CHANGED **************/
 
     //-----------------------ABILITY1-------------------------------//
 
     public GameObject Ability1Collider;
+    private float ability1ColliderTime = 3f;
 
+    //-----------------------ABILITY2-------------------------------//
 
+    [Range (0,140)] public float furyValue = 0;
+    public float furyValueIncrement = 8.75f;
+    public RectTransform furyBar;
+    public float ab2HealingSpeed = 3.5f;
+    public float healingIncreasedTime = 10f;
 
 
     public override void Start()
     {
+        hpRestoring = GetComponent<HealthRestoring>();
         base.Start();
+        barbarianAnimator = GetComponent<Animator>();
+        maxTimeSinceHitten = 20f; 
     }
 
     public override void Update()
     {
         base.Update();
-        if (attackInput == 1)
+        if (inputH.attackInput == 1)
         {
             Debug.Log(gameObject.name + ": I am attacking");
             if (Time.time >= nextAttackTime)
@@ -45,19 +67,14 @@ public class BarbarianController : PlayerController
 
             }
         }
-        attackInput = 0;
+        inputH.attackInput = 0;
 
-        if (ability1Input == 1)
+        timePassedSinceHitten += Time.deltaTime;
+        if (timePassedSinceHitten >= maxTimeSinceHitten)
         {
-            Debug.LogWarning("ability1 used");
-            if(Time.time >= nextAbility1Time)
-            {
-                HammerSmash();
-                nextAbility1Time = Time.time + 1f / ability1Rate;
-            }
+            timePassedSinceHitten = maxTimeSinceHitten;
+            hpRestoring.timePassedSinceHitten = timePassedSinceHitten;
         }
-        else {  Ability1Collider.GetComponent<MeshCollider>().enabled = false; }
-        ability1Input = 0;
     }
 
     public override void FixedUpdate() 
@@ -69,18 +86,64 @@ public class BarbarianController : PlayerController
 
     public override void Attack()
     {
-        //set attack animation
-            Collider[] hitten = Physics.OverlapCapsule(attackPointMin.position, attackPointMax.position, attackRange, enemyLayers); //Con rampas cuidao, quizás cambiarlo a raycast?
-            foreach (Collider obj in hitten)
+        if(aux <= 0)
+        {
+            GetComponent<AudioSource>().PlayOneShot(aa1);
+            barbarianAnimator.SetTrigger("BarbarianAA");
+            aux++;
+        }
+        else
+        {
+            GetComponent<AudioSource>().PlayOneShot(aa2);
+            barbarianAnimator.SetTrigger("BarbarianAA2");
+            aux = 0;
+        }
+
+        Collider[] hitten = Physics.OverlapCapsule(attackPointMin.position, attackPointMax.position, attackRange, enemyLayers); 
+        foreach (Collider obj in hitten)
+        {
+            Debug.Log("Damage dealed to ->" + obj.name);
+
+            if (obj.transform.GetComponent<SkeletonRagdoll>() && obj.transform.GetComponent<SkeletonController>().risen == true)
             {
-                Debug.Log("Damage dealed to ->" + obj.name);
-
-                //obj.GetComponent<> >> TakeDamage( ): 
-
+                SkeletonRagdoll skeleton = obj.transform.GetComponent<SkeletonRagdoll>();
+                if (skeleton != null)
+                {
+                    skeleton.Die();
+                }
+                Explode();
             }
 
-        
+
+            if (obj.transform.GetComponent<LichController>())
+            {
+                LichController lich = obj.transform.GetComponent<LichController>();
+                if (lich != null)
+                {
+                    lich.TakeDamage(attackDamage);
+                }
+                Explode();
+            }
+
+            if (obj.transform.GetComponent<GolemController>())
+            {
+                GolemController golem = obj.transform.GetComponent<GolemController>();
+                if (golem != null)
+                {
+                    golem.TakeDamage(attackDamage);
+                }
+                Explode();
+            }
+
+        }
+
+        if(hitten.Length > 0)
+            IncrementFury();
+
+        timePassedSinceHitten = 0;
+        hpRestoring.timePassedSinceHitten = timePassedSinceHitten;
     }
+
 
     private void OnDrawGizmosSelected()
     {
@@ -92,17 +155,38 @@ public class BarbarianController : PlayerController
         Gizmos.DrawLine(attackPointMin.position,attackPointMax.position);
     }
 
-    public void HammerSmash() //maybe coroutine needed, for trigger 2 stay while anim is playing... or another f() 2 desable collider when anim ends
+    public void HammerSmash() 
     {
-            Ability1Collider.GetComponent<MeshCollider>().enabled = true;
-            //activar solo el collider que quiero, el call se hará desde ontriggerenter. llamar a esta funcion desde animacion en unity !
-            Debug.Log("Abilit1: HammerSmash used");
-        
 
-        
+        /* 
+         * call from there doDmg() funcion.
+         * 
+         */
+
+        barbarianAnimator.SetTrigger("HammerSmash");
+
+            Debug.Log("Abilit1: HammerSmash used");
+        timePassedSinceHitten = 0;
+        hpRestoring.timePassedSinceHitten = timePassedSinceHitten;
+
     }
 
-    private void OnTriggerStay(Collider other)
+    public void FuryHealing()
+    {
+        timePassedSinceHitten = maxTimeSinceHitten;
+        hpRestoring.pointIncreasePerSecond = ab2HealingSpeed;
+        StartCoroutine("WaitToSetHealing");
+    }
+    
+    IEnumerator WaitToSetHealing()
+    {
+         
+        yield return new WaitForSeconds(healingIncreasedTime);
+        hpRestoring.pointIncreasePerSecond = baseHealingSpeed;
+
+    }
+
+    private void OnTriggerStay(Collider other) //this 2 do in the collider itself, call dmg from there as well!!
     {
         int i = 0; 
         if(other.gameObject.layer == enemyLayers)
@@ -111,4 +195,40 @@ public class BarbarianController : PlayerController
             i++;
         }
     }
+
+
+
+
+
+
+    /*EXTRA FUNCTIONS*/
+
+    void IncrementFury()
+    {
+        furyValue += furyValueIncrement;
+        if (furyValue > 140) furyValue = 140;
+        furyBar.sizeDelta = new Vector2(furyValue, furyBar.sizeDelta.y);
+
+    }
+    void Explode()
+    {
+        Debug.Log("explode");
+        Collider[] colliders = Physics.OverlapSphere(transform.position, 1f,explosionLayers);
+
+        foreach (Collider closeObjects in colliders)
+        {
+            Rigidbody rigidbody = closeObjects.GetComponent<Rigidbody>();
+            if (rigidbody != null)
+            {
+                //rigidbody.AddExplosionForce(2000f, transform.position, 50f, 50f); //Barbarian Jab
+                rigidbody.AddExplosionForce(2000f, transform.position, 1f, 0.5f); //Normal
+            }
+        }
+    }
+
+
+
+
+
+
 }

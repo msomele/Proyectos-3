@@ -6,24 +6,29 @@ using TMPro;
 
 public class AbilityCooldown : MonoBehaviour
 {
-    //este script se asigna al boton de la ui//
-
-    public string abilityButtonAxisName = ""; //que boton triggers la ability
+    /*este script se asigna al boton de la ui*/
+    [SerializeField] private string abilityName;
     public Image darkMask;
     public TMP_Text coolDownTextDisplay;
-
+    public InputHolders holder;
+    [SerializeField]
     private Ability ability; //QUITAR ESTO MAS TARDE 
-    private GameObject weaponHolder; //quitar
+    public GameObject weaponHolder; //quitar
     private Image myButtonImage;
     private AudioSource abilitySource;
+
+    public bool startsInReady;
+
+
     private float coolDownDuration;
     private float nextReadyTime;
     private float coolDownTimeLeft;
 
     private void Start()
     {
-        //Initialize(ability,weaponHolder);
-        
+        abilityName = ability.aName;
+        Initialize(ability,weaponHolder);
+        SelectInput(abilityName);
     }
 
     public void Initialize(Ability selectedAbility, GameObject weaponHolder)
@@ -35,7 +40,8 @@ public class AbilityCooldown : MonoBehaviour
         darkMask.sprite = ability.aSprite;
         coolDownDuration = ability.aBaseCd;
         ability.Initialize(weaponHolder);
-        AbilityReady();
+        if(startsInReady)
+            AbilityReady();
     }
 
     private void Update()
@@ -44,10 +50,7 @@ public class AbilityCooldown : MonoBehaviour
         if(coolDownComplete)
         {
             AbilityReady();
-            if(Input.GetButtonDown(abilityButtonAxisName)) //cambiar x nuevo input
-            {
-                ButtonTriggered();
-            }
+            SelectInput(abilityName);
         }
         else
         {
@@ -66,9 +69,9 @@ public class AbilityCooldown : MonoBehaviour
         coolDownTimeLeft -= Time.deltaTime;
         float roundedCd = Mathf.Round(coolDownTimeLeft);
         coolDownTextDisplay.text = roundedCd.ToString();
-        darkMask.fillAmount = (coolDownTimeLeft / coolDownDuration);
+        darkMask.fillAmount = (coolDownTimeLeft / coolDownDuration); //% of the cooldown duration left, used to elapse the mask
     }
-
+     
     private void ButtonTriggered()
     {
         nextReadyTime = coolDownDuration + Time.time;
@@ -77,7 +80,27 @@ public class AbilityCooldown : MonoBehaviour
         coolDownTextDisplay.enabled = true;
         abilitySource.clip = ability.aSound;
         abilitySource.Play();
-        ability.TriggerAbility();
+        ability.TriggerAbility(); 
+    }
+
+
+    private void SelectInput(string text)
+    {
+        switch(text)
+        {
+            case "HammerSmash":
+                if (holder.ability1Input > 0)
+                {
+                    ButtonTriggered();
+                }
+                break;
+            case "Healing":
+                if (holder.ability2Input > 0 && weaponHolder.GetComponent<BarbarianController>().furyValue >= 140)
+                {
+                    ButtonTriggered();
+                }
+                break;
+        }
     }
 
 }

@@ -2,26 +2,26 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu (menuName ="Abilities/HammerSmashAbility")]
+[CreateAssetMenu (menuName = "Abilities/Barbarian/HammerSmashAbility")]
 public class HammerSmashAbility : Ability
 {
-    public int hammerDamage = 10;
-    public float hammerRange = 3f;
-    public float hitVel = 1f;
+    public int hammerDamage = 20;
+    public float hammerRange = 1.5f;
+    public float hammerRateAA = 2f;
 
-    private BarbarianController playerController;
+    public BarbarianController playerController;
 
     public override void Initialize(GameObject obj) //pasar como ref el obj que tenga el BarbarianController
     {
-        //Actuate as the Start in monobehaviour, but from scriptableobjetcs.
         playerController = obj.GetComponent<BarbarianController>();
-        playerController.Initialize();
-        //set monobeh. script variables as the scriptableobjetc ones. 
-        
+        playerController.attackDamage = hammerDamage;
+        playerController.attackRange = hammerRange;
+        playerController.attackRate = hammerRateAA;
     }
 
     public override void TriggerAbility()
     {
         //playerController.funciondelahabilidad();
+        playerController.HammerSmash(); 
     }
 }

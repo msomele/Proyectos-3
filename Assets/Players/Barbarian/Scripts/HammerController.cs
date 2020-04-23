@@ -18,4 +18,6 @@ public class HammerController : MonoBehaviour
     }
 
    //cuando se haga la animación de hit, cambiar como se ha hecho en el default pulse a una animación el parametro intensity
+   //Carga barra de ira, iluminación escalable conforme a dicha barra
+   //usada para segunda habilidad (curación % a la barra) 
 }
