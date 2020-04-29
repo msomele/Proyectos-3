@@ -17,6 +17,7 @@ MonoBehaviour:
   aSound: {fileID: 8300000, guid: 055ce2d01bc78324ab58e0ad6abcff8f, type: 3}
   aBaseCd: 40
   playerController: {fileID: 0}
-  baseHealingSpeed: 1
-  advancedHealingSpeed: 5
-  healingIncreasedTime: 10
+  baseHealingSpeed: 5
+  advancedHealingSpeed: 15
+  healingIncreasedTime: 5.5
+  maxTimeSinceHitten: 20

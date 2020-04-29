@@ -11,11 +11,12 @@ public class HealthRestoring : MonoBehaviour
 
     public float timePassedSinceHitten;
     public float maxTimeSinceHitten;
-
+    public bool isAbility;
     public RectTransform hpVisual;
     private BarbarianController player;    
     private void Start()
     {
+        isAbility = false;
         player = this.GetComponent<BarbarianController>();
         maxHealth = player.hp;
         pointIncreasePerSecond = player.baseHealingSpeed;
@@ -26,9 +27,13 @@ public class HealthRestoring : MonoBehaviour
     private void Update()
     {
     
-        if(updatedHealth > maxHealth) updatedHealth = maxHealth;
-        if (updatedHealth < 0) updatedHealth = 0;
-        
+        if(updatedHealth >= maxHealth) updatedHealth = maxHealth;
+        if (updatedHealth < 0)
+        {
+            updatedHealth = 0;
+            hpVisual.sizeDelta = new Vector2(updatedHealth, hpVisual.sizeDelta.y);
+        }
+        //default health regeneration
         if(timePassedSinceHitten >= maxTimeSinceHitten)
         {
             updatedHealth += pointIncreasePerSecond * Time.deltaTime;

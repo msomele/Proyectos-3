@@ -23,7 +23,7 @@ public class BarbarianController : PlayerController
     [HideInInspector] int aux = 0;
     public AudioClip aa1;
     public AudioClip aa2;
-
+    public GameObject hitPoint; 
     //-----------------------HEALING-------------------------------//
     public float baseHealingSpeed = 0.5f;
     public float timePassedSinceHitten = 0;
@@ -69,7 +69,11 @@ public class BarbarianController : PlayerController
         }
         inputH.attackInput = 0;
 
+        //hacer esto en el otro lao o que !!!!!!!debugear 
+
         timePassedSinceHitten += Time.deltaTime;
+
+        
         if (timePassedSinceHitten >= maxTimeSinceHitten)
         {
             timePassedSinceHitten = maxTimeSinceHitten;
@@ -140,8 +144,9 @@ public class BarbarianController : PlayerController
         if(hitten.Length > 0)
             IncrementFury();
 
-        timePassedSinceHitten = 0;
-        hpRestoring.timePassedSinceHitten = timePassedSinceHitten;
+        if(!hpRestoring.isAbility)
+            timePassedSinceHitten = 0;
+        hpRestoring.timePassedSinceHitten = timePassedSinceHitten; //reset si ataco al healing
     }
 
 
@@ -166,13 +171,17 @@ public class BarbarianController : PlayerController
         barbarianAnimator.SetTrigger("HammerSmash");
 
             Debug.Log("Abilit1: HammerSmash used");
-        timePassedSinceHitten = 0;
+
+        if (!hpRestoring.isAbility)
+            timePassedSinceHitten = 0;
         hpRestoring.timePassedSinceHitten = timePassedSinceHitten;
 
     }
 
     public void FuryHealing()
     {
+        hpRestoring.isAbility = true;
+        ResetFury();
         timePassedSinceHitten = maxTimeSinceHitten;
         hpRestoring.pointIncreasePerSecond = ab2HealingSpeed;
         StartCoroutine("WaitToSetHealing");
@@ -180,9 +189,9 @@ public class BarbarianController : PlayerController
     
     IEnumerator WaitToSetHealing()
     {
-         
         yield return new WaitForSeconds(healingIncreasedTime);
         hpRestoring.pointIncreasePerSecond = baseHealingSpeed;
+        hpRestoring.isAbility = false;
 
     }
 
@@ -210,20 +219,26 @@ public class BarbarianController : PlayerController
         furyBar.sizeDelta = new Vector2(furyValue, furyBar.sizeDelta.y);
 
     }
+    void ResetFury()
+    {
+        furyValue = 0;
+        furyBar.sizeDelta = new Vector2(furyValue, furyBar.sizeDelta.y);
+
+    }
     void Explode()
     {
-        Debug.Log("explode");
-        Collider[] colliders = Physics.OverlapSphere(transform.position, 1f,explosionLayers);
-
-        foreach (Collider closeObjects in colliders)
+        Debug.LogWarning("explode");
+        
+        Collider[] hitten = Physics.OverlapCapsule(attackPointMin.position, attackPointMax.position, attackRange, enemyLayers);
+        foreach(Collider bone in hitten)
         {
-            Rigidbody rigidbody = closeObjects.GetComponent<Rigidbody>();
+            Rigidbody rigidbody = bone.GetComponent<Rigidbody>();
             if (rigidbody != null)
             {
-                //rigidbody.AddExplosionForce(2000f, transform.position, 50f, 50f); //Barbarian Jab
-                rigidbody.AddExplosionForce(2000f, transform.position, 1f, 0.5f); //Normal
+                rigidbody.AddExplosionForce(10000f, hitPoint.transform.position, 3f , 25f); //Normal
             }
         }
+      
     }
 
 

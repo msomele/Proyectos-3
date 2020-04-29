@@ -591,14 +591,17 @@ MonoBehaviour:
   attackRate: 2
   aa1: {fileID: 8300000, guid: 0d95aa928e9ed934ab6a52e51e070193, type: 3}
   aa2: {fileID: 8300000, guid: 087d8be13b80c88418719220e1e191de, type: 3}
+  hitPoint: {fileID: 8940075425078322717}
   baseHealingSpeed: 0.5
   timePassedSinceHitten: 0
   maxTimeSinceHitten: 0
+  hpRestoring: {fileID: 0}
   Ability1Collider: {fileID: 5062255965232034178}
   furyValue: 0
   furyValueIncrement: 15
   furyBar: {fileID: 0}
   ab2HealingSpeed: 3.5
+  healingIncreasedTime: 10
 --- !u!114 &6338838139611329817
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -614,8 +617,9 @@ MonoBehaviour:
   updatedHealth: 0
   maxHealth: 0
   pointIncreasePerSecond: 0
+  timePassedSinceHitten: 0
+  maxTimeSinceHitten: 0
   hpVisual: {fileID: 0}
-  player: {fileID: 0}
 --- !u!114 &425650776
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -821,6 +825,36 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -1868505711193121641, guid: fa23aed37736ac044a89d31a726b4602, type: 3}
+--- !u!1 &8940075425078322717
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1398219423361497055}
+  m_Layer: 0
+  m_Name: HitPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1398219423361497055
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8940075425078322717}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.956, y: 3.518, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2255015633535874391}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2813234149335411778
 PrefabInstance:
   m_ObjectHideFlags: 0
