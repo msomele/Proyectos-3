@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16d6cb5a691b2e446b0796eea4444ed1, type: 3}
+  m_Name: TestBarbarian2
+  m_EditorClassIdentifier: 
+  characterName: Barb2
+  startingHp: 300
+  startingDmg: 800
+  attackRange: 10
+  attackDamage: 800
+  attackRate: 0.1
+  startomgHealthRegen: 0.5
+  characterAbilities:
+  - {fileID: 11400000, guid: 5f03aea15d1944d44a03996ef3f20b95, type: 2}
+  - {fileID: 11400000, guid: 221771a71824cbb408cdbd02161cc19c, type: 2}
+  playerPrefab: {fileID: 3444196804451334834, guid: c636d55ef284c4d41adba89f9915f6f7,
+    type: 3}

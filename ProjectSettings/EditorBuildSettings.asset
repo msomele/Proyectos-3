@@ -8,6 +8,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: d1c3109bdb54ad54c8a2b2838528e640
+  - enabled: 1
+    path: Assets/Players/Barbarian/Barbarian.unity
+    guid: ec15fc9314ffef94899e5c0ce0a5783d
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 7da0358aed25eab42afc2acce2e5a61f,
       type: 2}

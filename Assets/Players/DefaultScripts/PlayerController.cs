@@ -59,14 +59,15 @@ public class PlayerController : MonoBehaviour
 
     void Awake()
     {
-        myCamera = GameObject.FindGameObjectWithTag("MainCamera");
-        myCamera.GetComponent<SmoothCameraMovement>().AddPlayer(gameObject);
-        inputH = gameObject.GetComponentInChildren<InputHolders>();
+        
     }
     
 
     public virtual void Start()
     {
+        myCamera = GameObject.FindGameObjectWithTag("MainCamera");
+        myCamera.GetComponent<SmoothCameraMovement>().AddPlayer(gameObject);
+        inputH = this.GetComponentInChildren<InputHolders>();
         rb = GetComponent<Rigidbody>();
         Cursor.visible = false;
     }

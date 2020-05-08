@@ -13,11 +13,14 @@ MonoBehaviour:
   m_Name: Barbarian
   m_EditorClassIdentifier: 
   characterName: Barbarian
-  startingHp: 100
+  startingHp: 140
   startingDmg: 10
   attackRange: 0.5
   attackDamage: 20
   attackRate: 2
+  startomgHealthRegen: 0.5
   characterAbilities:
   - {fileID: 11400000, guid: 5f03aea15d1944d44a03996ef3f20b95, type: 2}
-  playerPrefab: {fileID: 0}
+  - {fileID: 11400000, guid: 221771a71824cbb408cdbd02161cc19c, type: 2}
+  playerPrefab: {fileID: 3444196804451334834, guid: c636d55ef284c4d41adba89f9915f6f7,
+    type: 3}

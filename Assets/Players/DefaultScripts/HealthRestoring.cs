@@ -16,8 +16,10 @@ public class HealthRestoring : MonoBehaviour
     private BarbarianController player;    
     private void Start()
     {
-        isAbility = false;
         player = this.GetComponent<BarbarianController>();
+        hpVisual = GameObject.FindGameObjectWithTag("HpP" + (player.GetPlayerIndex()+1).ToString()).GetComponent<RectTransform>();
+
+        isAbility = false;
         maxHealth = player.hp;
         pointIncreasePerSecond = player.baseHealingSpeed;
         timePassedSinceHitten = player.timePassedSinceHitten;

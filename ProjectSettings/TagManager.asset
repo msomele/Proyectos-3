@@ -6,6 +6,10 @@ TagManager:
   tags:
   - CurrentEnemyObjective
   - Skeleton
+  - HpP1
+  - HpP2
+  - FuryP1
+  - FuryP2
   layers:
   - Default
   - TransparentFX

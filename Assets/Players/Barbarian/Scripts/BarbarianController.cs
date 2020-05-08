@@ -51,6 +51,7 @@ public class BarbarianController : PlayerController
         base.Start();
         barbarianAnimator = GetComponent<Animator>();
         maxTimeSinceHitten = 20f; 
+        furyBar = GameObject.FindGameObjectWithTag("FuryP" + (GetPlayerIndex() + 1).ToString()).GetComponent<RectTransform>();
     }
 
     public override void Update()

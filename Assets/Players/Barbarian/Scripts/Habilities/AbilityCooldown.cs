@@ -11,9 +11,12 @@ public class AbilityCooldown : MonoBehaviour
     public Image darkMask;
     public TMP_Text coolDownTextDisplay;
     public InputHolders holder;
-    [SerializeField]
-    private Ability ability; //QUITAR ESTO MAS TARDE 
-    public GameObject weaponHolder; //quitar
+
+    [SerializeField] //QUITAR ESTO MAS TARDE 
+    private Ability ability;
+    [SerializeField] //quitar
+    private GameObject weaponHolder; 
+
     private Image myButtonImage;
     private AudioSource abilitySource;
 

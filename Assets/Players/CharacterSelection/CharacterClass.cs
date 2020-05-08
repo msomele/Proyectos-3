@@ -13,6 +13,8 @@ public class CharacterClass : ScriptableObject
     public float attackDamage = 20;
     public float attackRate = 2f;
 
+    public float startomgHealthRegen = 0.5f;
+
     public Ability[] characterAbilities;
     public GameObject playerPrefab;
 
