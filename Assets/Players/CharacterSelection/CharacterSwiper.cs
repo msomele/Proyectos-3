@@ -8,13 +8,19 @@ using UnityEngine.SceneManagement;
 
 public class CharacterSwiper : MonoBehaviour
 {
+    public string Scene2LoadName;
     public GameObject player1;
     public GameObject player2;
-
+    public int[] elecciones = new int[2];
     public GameObject characterSelectPanel;
     public GameObject abilityPanel;
 
     public CharacterSelector characterSelector;
+    public GameObject Barbarian3DModelP1;
+    public GameObject Magician3DModelP1;
+
+    public GameObject Barbarian3DModelP2;
+    public GameObject Magician3DModelP2;
 
     public Sprite[] characters = new Sprite[2];
     public Image p1Reference;
@@ -24,21 +30,22 @@ public class CharacterSwiper : MonoBehaviour
 
     public void StartGame()
     {
+        elecciones = GetCurrentCharacters();
         StartCoroutine(LoadSceneAsync());   
     }
 
     IEnumerator LoadSceneAsync()
     {
-        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("Barbarian");
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(Scene2LoadName);
         asyncLoad.allowSceneActivation = true;
         while(!asyncLoad.isDone)
         {
             yield return null;
         }
-        //characterSelectPanel.SetActive(false);
         abilityPanel.SetActive(true);
-        characterSelector.StartGame(GetCurrentCharacters()[0], player1);
-        characterSelector.StartGame(GetCurrentCharacters()[1], player2);
+        characterSelectPanel.SetActive(false);
+        characterSelector.StartGame(elecciones[0], player1);
+        characterSelector.StartGame(elecciones[1], player2);
     }
 
 
@@ -55,28 +62,68 @@ public class CharacterSwiper : MonoBehaviour
         if (p2Reference.sprite == characters[1])
             p2Text.text = "MAGICIAN";
     }
-    public void SwipeLeft(Image character)
+
+    public void SwipeLeftP1(Image character)
     {
         if (character.sprite != characters[0])
-            character.sprite = characters[0];
+        {
+            character.sprite = characters[0]; //0 barbarian 1magician
+            Barbarian3DModelP1.SetActive(true);
+            Magician3DModelP1.SetActive(false);
+        }
         else
-            SwipeRight(character);
+            SwipeRightP1(character);
 
         ChangeText();
     }
 
-    public void SwipeRight(Image character)
+    public void SwipeRightP1(Image character)
     {
         if (character.sprite != characters[1])
+        {
             character.sprite = characters[1];
+            Barbarian3DModelP1.SetActive(false);
+            Magician3DModelP1.SetActive(true);
+
+        }
         else
-            SwipeLeft(character);
+            SwipeLeftP1(character);
 
         ChangeText();
     }
+
+    public void SwipeLeftP2(Image character)
+    {
+        if (character.sprite != characters[0])
+        {
+            character.sprite = characters[0]; //0 barbarian 1magician
+            Barbarian3DModelP2.SetActive(true);
+            Magician3DModelP2.SetActive(false);
+        }
+        else
+            SwipeRightP2(character);
+
+        ChangeText();
+    }
+
+    public void SwipeRightP2(Image character)
+    {
+        if (character.sprite != characters[1])
+        {
+            character.sprite = characters[1];
+            Barbarian3DModelP2.SetActive(false);
+            Magician3DModelP2.SetActive(true);
+
+        }
+        else
+            SwipeLeftP2(character);
+
+        ChangeText();
+    }
+
+
     public int[] GetCurrentCharacters()
     {
-        int[] elecciones = new int[2];
 
         if (p1Reference.sprite == characters[0])
         {

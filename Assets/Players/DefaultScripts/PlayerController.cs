@@ -15,6 +15,11 @@ public class PlayerController : MonoBehaviour
     [Header("Assignables")]
     [HideInInspector] public GameObject myCamera;
     [HideInInspector] public Rigidbody rb;
+    [HideInInspector] public GameObject rotation;
+
+    //public GameObject pauseMenu;
+    public bool isGamePaused;
+
     public float hp = 140;
 
     //-----------------------MOVEMENT-------------------------------//
@@ -27,14 +32,18 @@ public class PlayerController : MonoBehaviour
     float hori, verti;
     //-----------------------LOOKING-------------------------------//
     [Header("Looking")]
+    public GameObject pointer; 
     private float sensitivity = 120f;
     private float lookingThreshold = 0.05f;
     private Quaternion rot;
     private Quaternion current;
     private Vector3 mouseLookInput;
-    
-    //-------------------INPUTS-----------------------------------//
-    [Header("Inputs")]
+    private bool canMove;
+    [HideInInspector] public bool doubleAttack;
+    [HideInInspector] public Quaternion previousRotation;
+    Quaternion curr;
+     //-------------------INPUTS-----------------------------------//
+     [Header("Inputs")]
 
     [SerializeField] private int playerIndex = 0;
     public InputHolders inputH;
@@ -59,25 +68,37 @@ public class PlayerController : MonoBehaviour
 
     void Awake()
     {
-        
+        canMove = true;
+        isGamePaused = false;
     }
     
 
     public virtual void Start()
     {
+        doubleAttack = false;
+        rotation = GetComponentInChildren<RotationPlayer>().gameObject;
+        curr = rotation.transform.rotation;
+        pointer = GetComponentInChildren<Pointer>().gameObject;
         myCamera = GameObject.FindGameObjectWithTag("MainCamera");
         myCamera.GetComponent<SmoothCameraMovement>().AddPlayer(gameObject);
         inputH = this.GetComponentInChildren<InputHolders>();
         rb = GetComponent<Rigidbody>();
         Cursor.visible = false;
+
+
+
     }
     public virtual void Update()
     {
         Look();
+        if (inputH.pauseInput == 1)
+            PauseGame();
+
+        inputH.pauseInput = 0;
     }
     public virtual void FixedUpdate()
     {
-       Move();
+
     }
 
     /* <InputsSetters>*/
@@ -106,27 +127,90 @@ public class PlayerController : MonoBehaviour
         {
            
                 rot = Quaternion.LookRotation(new Vector3(inputH.lookInput.x, 0, inputH.lookInput.y));
-                transform.rotation = Quaternion.Lerp(current, rot, sensitivity * Time.fixedDeltaTime);
-                current = transform.rotation; 
+                pointer.transform.rotation = Quaternion.Lerp(current, rot, sensitivity * Time.fixedDeltaTime); //transform.rotation
+                current = pointer.transform.rotation;//transform.rotation; 
         }
         else
         {
-            transform.rotation = current;
+            pointer.transform.rotation = current; //transform.rotation
         }
         
     }
 
     /* <Move()>*/
-    public void Move()
+    public virtual void Move(Animator player)
     {
-        addVel = new Vector2(inputH.movementInput.x, inputH.movementInput.y) * speed;
+        if (canMove)
+        {
+            addVel = new Vector2(inputH.movementInput.x, inputH.movementInput.y) * speed;
 
-        if ((addVel.x >= movingThreshold || addVel.y >= movingThreshold) || (addVel.x <= -movingThreshold || addVel.y <= -movingThreshold))
-            rb.MovePosition(rb.position + new Vector3(addVel.x, 0, addVel.y) * Time.fixedDeltaTime);
+            if ((addVel.x >= movingThreshold || addVel.y >= movingThreshold) || (addVel.x <= -movingThreshold || addVel.y <= -movingThreshold))
+            {
+                rb.MovePosition(rb.position + new Vector3(addVel.x, 0, addVel.y) * Time.fixedDeltaTime);
+                rb.gameObject.transform.LookAt(rb.position + new Vector3(addVel.x, 0, addVel.y) * Time.fixedDeltaTime);
+                player.SetBool("Running", true);
+            }
+            else
+                player.SetBool("Running", false);
+
+        }
 
 
     }
     /* <Attack>*/
-    public virtual void Attack() { }
+    public virtual void Attack() //da problemas el previousRotation con el doble aa ... solucion?? npi
+    {
+        RotateTowardsPointer();
+    }
+    public void RotateTowardsPointer()
+    {
+        canMove = false;
+        Vector3 dir = pointer.GetComponentInChildren<PointerDirection>().transform.position;
+        Quaternion auxrot = Quaternion.LookRotation(dir - rotation.transform.position);
+        rotation.transform.rotation = Quaternion.Lerp(curr, auxrot, 1f);
+        curr = rotation.transform.rotation;
+
+    }
+
+    public void SaveRotation()
+    {
+        previousRotation = rotation.transform.rotation;
+    }
+
+
+
+    public IEnumerator NowCanMove(Animator player)//,float time) //call it at the end of Attack funcion in each playerScript
+    {
+        //yield return new WaitForSeconds(time); 
+        yield return null;
+        rotation.transform.rotation = previousRotation;
+        canMove = true;
+    }
+
+    /* <Pause> */
+    public void PauseGame()
+    {
+        if (!isGamePaused)
+        {
+            isGamePaused = true;
+            Time.timeScale = 0f;
+            myCamera.GetComponent<MainMenuLogic>().BackToMainMenu();
+        }
+        else 
+        {
+            isGamePaused = false;
+            Time.timeScale = 1f;
+            myCamera.GetComponent<MainMenuLogic>().ResumeGame();
+        }
+    }
+
+    public int _playerIndex
+    {
+        get{ return playerIndex; }
+        set{ playerIndex = value; }
+    }
+    
+
+
 
 }

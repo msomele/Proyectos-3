@@ -15,7 +15,7 @@ public class AbilityCooldown : MonoBehaviour
     [SerializeField] //QUITAR ESTO MAS TARDE 
     private Ability ability;
     [SerializeField] //quitar
-    private GameObject weaponHolder; 
+    private GameObject aCWeaponHolder; 
 
     private Image myButtonImage;
     private AudioSource abilitySource;
@@ -23,28 +23,40 @@ public class AbilityCooldown : MonoBehaviour
     public bool startsInReady;
 
 
-    private float coolDownDuration;
+    public float coolDownDuration;
     private float nextReadyTime;
     private float coolDownTimeLeft;
 
+    private Image[] aux = new Image[2];
     private void Start()
-    {
+    {/*
         abilityName = ability.aName;
         Initialize(ability,weaponHolder);
-        SelectInput(abilityName);
+        SelectInput(abilityName); */
+        myButtonImage = GetComponent<Image>();
+        abilitySource = GetComponent<AudioSource>();
+        aux = GetComponentsInChildren<Image>();
+        darkMask = aux[1];
+        coolDownTextDisplay = GetComponentInChildren<TMP_Text>();
     }
 
     public void Initialize(Ability selectedAbility, GameObject weaponHolder)
     {
         ability = selectedAbility;
-        myButtonImage = GetComponent<Image>();
-        abilitySource = GetComponent<AudioSource>();
-        myButtonImage.sprite = ability.aSprite;
-        darkMask.sprite = ability.aSprite;
+        abilityName = ability.aName;
+
+        aCWeaponHolder = weaponHolder;
+        holder = aCWeaponHolder.GetComponentInChildren<InputHolders>();
+        
         coolDownDuration = ability.aBaseCd;
-        ability.Initialize(weaponHolder);
-        if(startsInReady)
+        Debug.Log("A base cD: " + ability.aBaseCd);
+        /*
+        myButtonImage.sprite = ability.aSprite;
+        darkMask.sprite = ability.aSprite;*/
+        ability.Initialize(aCWeaponHolder);
+        if (startsInReady)
             AbilityReady();
+        SelectInput(abilityName);
     }
 
     private void Update()
@@ -63,7 +75,7 @@ public class AbilityCooldown : MonoBehaviour
 
     private void AbilityReady()
     {
-        coolDownTextDisplay.enabled = false;
+        coolDownTextDisplay.enabled = false; //!
         darkMask.enabled = false; 
     }
 
@@ -87,7 +99,7 @@ public class AbilityCooldown : MonoBehaviour
     }
 
 
-    private void SelectInput(string text)
+    private void SelectInput(string text) //pasar el nombre de la habilidad
     {
         switch(text)
         {
@@ -98,7 +110,7 @@ public class AbilityCooldown : MonoBehaviour
                 }
                 break;
             case "Healing":
-                if (holder.ability2Input > 0 && weaponHolder.GetComponent<BarbarianController>().furyValue >= 140)
+                if (holder.ability2Input > 0 && aCWeaponHolder.GetComponent<BarbarianController>().furyValue >= 140)
                 {
                     ButtonTriggered();
                 }

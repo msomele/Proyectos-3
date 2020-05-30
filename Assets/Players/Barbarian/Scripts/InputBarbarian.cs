@@ -1,4 +1,4 @@
-// GENERATED AUTOMATICALLY FROM 'Assets/Scripts/Barbarian/BarbarianInput.inputactions'
+// GENERATED AUTOMATICALLY FROM 'Assets/Players/Barbarian/BarbarianInput.inputactions'
 
 using System;
 using System.Collections;
@@ -70,6 +70,14 @@ public class @InputBarbarian : IInputActionCollection, IDisposable
                     ""name"": ""Ability4"",
                     ""type"": ""PassThrough"",
                     ""id"": ""bcd281e9-c22e-4a95-b5cd-fad4bd5c3696"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Press(behavior=2)""
+                },
+                {
+                    ""name"": ""PauseMenu"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""220e7907-dab9-4a4e-9141-5ae06573c94d"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": ""Press(behavior=2)""
@@ -152,6 +160,17 @@ public class @InputBarbarian : IInputActionCollection, IDisposable
                     ""action"": ""Ability4"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6807b0c5-e758-4fcf-a1a2-442398cf3677"",
+                    ""path"": ""<Gamepad>/start"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""PauseMenu"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -179,6 +198,7 @@ public class @InputBarbarian : IInputActionCollection, IDisposable
         m_Gameplay_Ability2 = m_Gameplay.FindAction("Ability2", throwIfNotFound: true);
         m_Gameplay_Ability3 = m_Gameplay.FindAction("Ability3", throwIfNotFound: true);
         m_Gameplay_Ability4 = m_Gameplay.FindAction("Ability4", throwIfNotFound: true);
+        m_Gameplay_PauseMenu = m_Gameplay.FindAction("PauseMenu", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -235,6 +255,7 @@ public class @InputBarbarian : IInputActionCollection, IDisposable
     private readonly InputAction m_Gameplay_Ability2;
     private readonly InputAction m_Gameplay_Ability3;
     private readonly InputAction m_Gameplay_Ability4;
+    private readonly InputAction m_Gameplay_PauseMenu;
     public struct GameplayActions
     {
         private @InputBarbarian m_Wrapper;
@@ -246,6 +267,7 @@ public class @InputBarbarian : IInputActionCollection, IDisposable
         public InputAction @Ability2 => m_Wrapper.m_Gameplay_Ability2;
         public InputAction @Ability3 => m_Wrapper.m_Gameplay_Ability3;
         public InputAction @Ability4 => m_Wrapper.m_Gameplay_Ability4;
+        public InputAction @PauseMenu => m_Wrapper.m_Gameplay_PauseMenu;
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -276,6 +298,9 @@ public class @InputBarbarian : IInputActionCollection, IDisposable
                 @Ability4.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnAbility4;
                 @Ability4.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnAbility4;
                 @Ability4.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnAbility4;
+                @PauseMenu.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnPauseMenu;
+                @PauseMenu.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnPauseMenu;
+                @PauseMenu.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnPauseMenu;
             }
             m_Wrapper.m_GameplayActionsCallbackInterface = instance;
             if (instance != null)
@@ -301,6 +326,9 @@ public class @InputBarbarian : IInputActionCollection, IDisposable
                 @Ability4.started += instance.OnAbility4;
                 @Ability4.performed += instance.OnAbility4;
                 @Ability4.canceled += instance.OnAbility4;
+                @PauseMenu.started += instance.OnPauseMenu;
+                @PauseMenu.performed += instance.OnPauseMenu;
+                @PauseMenu.canceled += instance.OnPauseMenu;
             }
         }
     }
@@ -323,5 +351,6 @@ public class @InputBarbarian : IInputActionCollection, IDisposable
         void OnAbility2(InputAction.CallbackContext context);
         void OnAbility3(InputAction.CallbackContext context);
         void OnAbility4(InputAction.CallbackContext context);
+        void OnPauseMenu(InputAction.CallbackContext context);
     }
 }

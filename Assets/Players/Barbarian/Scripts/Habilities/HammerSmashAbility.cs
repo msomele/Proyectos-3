@@ -5,18 +5,16 @@ using UnityEngine;
 [CreateAssetMenu (menuName = "Abilities/Barbarian/HammerSmashAbility")]
 public class HammerSmashAbility : Ability
 {
-    public int hammerDamage = 20;
-    public float hammerRange = 1.5f;
-    public float hammerRateAA = 2f;
+    public int hammerDamage = 60;
+   /* public float hammerRange = 1.5f;
+    public float hammerRateAA = 2f; */
 
     public BarbarianController playerController;
 
     public override void Initialize(GameObject obj) //pasar como ref el obj que tenga el BarbarianController
     {
         playerController = obj.GetComponent<BarbarianController>();
-        playerController.attackDamage = hammerDamage;
-        playerController.attackRange = hammerRange;
-        playerController.attackRate = hammerRateAA;
+        playerController.ab1AttackDmg = hammerDamage;
     }
 
     public override void TriggerAbility()

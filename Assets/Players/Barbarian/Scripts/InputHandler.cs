@@ -28,7 +28,11 @@ public class InputHandler : MonoBehaviour
 
 
     }
-
+    public void OnPause(CallbackContext context)
+    {
+        if (player != null)
+            holder.SetPauseMenu(context.ReadValue<float>());
+    }
     public void OnMove(CallbackContext context)
     {
         if(player != null)

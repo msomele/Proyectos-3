@@ -13,10 +13,8 @@ public class InputHolders : MonoBehaviour
     public float ability2Input = 0;
     public float ability3Input = 0;
     public float ability4Input = 0;
-    private void Start()
-    {
-        Debug.Log("Im working u*u");
-    }
+    public float pauseInput = 0;
+
     public void SetMoveInputVector(Vector2 move) => movementInput = move;
     public void SetLookInputVector(Vector2 look) => lookInput = look;
     public void SetAttackInputVector(float attack) => attackInput = attack;
@@ -24,4 +22,5 @@ public class InputHolders : MonoBehaviour
     public void SetAbility2InputVector(float ability2) => ability2Input = ability2;
     public void SetAbility3InputVector(float ability3) => ability3Input = ability3;
     public void SetAbility4InputVector(float ability4) => ability4Input = ability4;
+    public void SetPauseMenu(float pause) => pauseInput = pause;
 }

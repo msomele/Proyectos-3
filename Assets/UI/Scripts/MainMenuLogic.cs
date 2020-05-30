@@ -17,13 +17,17 @@ public class MainMenuLogic : MonoBehaviour
     public GameObject gameplayOptions;
     public GameObject soundOptions;
     public GameObject controlOptions;
+    [Header("CharactersMenu")]
+    public GameObject SelectPlayers;
     [Header("Animations")]
     public Animator credits;
 
 
     private void Start()
-    {
-        BackToMainMenu();
+    {if (SceneManager.GetActiveScene().name != ("Scenario"))
+            BackToMainMenu();
+        else
+            SelectPlayers = GameObject.FindObjectOfType<CharacterSelector>().gameObject;
     }
 
     public void BackToMainMenu()
@@ -40,7 +44,11 @@ public class MainMenuLogic : MonoBehaviour
         OptionsMenu.SetActive(true);
         OptionsMenuVideo();
     }
-
+    public void ShowCharacerSelector()
+    {
+        MainMenu.SetActive(false);
+        SelectPlayers.SetActive(true);
+    }
     public void ShowCredits()
     {
         MainMenu.SetActive(false);
@@ -48,7 +56,13 @@ public class MainMenuLogic : MonoBehaviour
         OptionsMenu.SetActive(false);
         credits.Play("Credits");
     }
-
+    public void StartGame()
+    {
+        MainMenu.SetActive(false);
+        SelectPlayers.SetActive(false);
+        this.GetComponent<Animator>().SetTrigger("PlayButton");
+    }
+    
     public void ExitGame()
     {
         Application.Quit();
@@ -85,4 +99,38 @@ public class MainMenuLogic : MonoBehaviour
         soundOptions.SetActive(true);
         controlOptions.SetActive(false);
     }
+
+
+    ////CUTRES
+    ///
+    public void ResumeGame()
+    {
+        MainMenu.SetActive(false);
+        OptionsMenu.SetActive(false);
+        Camera.main.GetComponentInChildren<PostProcessingRealtimeChanger>().ChangeFov(20);
+    }
+    public void PauseGame()
+    {
+        MainMenu.SetActive(true);
+        OptionsMenu.SetActive(false);
+    }
+    public void GoToMainMenu(string Scene2LoadName)
+    {
+        Destroy(SelectPlayers);
+        SceneManager.LoadScene(Scene2LoadName);
+    }
+
+    public void CutrePause()
+    {
+        if (Input.GetKeyDown(KeyCode.Space) && SceneManager.GetActiveScene().name == ("Scenario"))
+        {
+            BackToMainMenu();
+            Camera.main.GetComponentInChildren<PostProcessingRealtimeChanger>().ChangeFov(0);
+        }
+    }
+    private void Update()
+    {
+        CutrePause();
+    }
+
 }

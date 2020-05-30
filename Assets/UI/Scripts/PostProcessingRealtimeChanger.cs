@@ -10,7 +10,9 @@ public class PostProcessingRealtimeChanger : MonoBehaviour
     public float min_dof, max_dof, current_dof;
     public float timeStartedLerping;
     public float LerpTime;
-    public bool shouldLerp;
+    public bool shouldLerp, shouldLerpV2;
+    public float givenDof;
+    public bool auxcutre;
     // Start is called before the first frame update
     void Start()
     {
@@ -20,7 +22,8 @@ public class PostProcessingRealtimeChanger : MonoBehaviour
         if (!volumeProfile.TryGet(out dof)) throw new System.NullReferenceException(nameof(dof));
         current_dof = max_dof;
         //ChangeDOF(12f);
-        Startlerping();
+        if(auxcutre)
+            Startlerping();
     }
     /*
     void ChangeDOF(float duration)
@@ -37,6 +40,7 @@ public class PostProcessingRealtimeChanger : MonoBehaviour
     {
         timeStartedLerping = Time.time;
         shouldLerp = true;
+        shouldLerpV2 = false; 
     }
 
     private void Update()
@@ -49,6 +53,15 @@ public class PostProcessingRealtimeChanger : MonoBehaviour
         {
             shouldLerp = false;
         }
+        
+        if(shouldLerpV2)
+        {
+            dof.focusDistance.Override(givenDof);
+        }
+        if (current_dof <= givenDof)
+        {
+            shouldLerpV2 = false;
+        }
     }
 
     float CustomFloatLerp(float start, float end, float timeStartedLerping, float lerptime)
@@ -58,4 +71,12 @@ public class PostProcessingRealtimeChanger : MonoBehaviour
         float result = Mathf.Lerp(start, end, percentageComplete);
         return result;
     }
+
+
+    public void ChangeFov(float fov)
+    {
+        dof.focusDistance.Override(fov);
+    }
+
+
 }

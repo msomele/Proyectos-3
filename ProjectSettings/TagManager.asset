@@ -10,6 +10,9 @@ TagManager:
   - HpP2
   - FuryP1
   - FuryP2
+  - Lich
+  - MainMenu
+  - Rotation
   layers:
   - Default
   - TransparentFX

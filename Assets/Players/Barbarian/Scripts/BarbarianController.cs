@@ -7,12 +7,14 @@ public class BarbarianController : PlayerController
  //Con heredar de PlayerController y en: Start, Update y FixedUpdate poner base.tatata() ya se mueve con el defaultSet.
 {
 
-    [HideInInspector] public Animator barbarianAnimator;
+    public Animator barbarianAnimator;
     public LayerMask enemyLayers;
     public LayerMask explosionLayers;
 
     public Transform attackPointMin, attackPointMax;
-
+    public bool isIdle;
+    public bool isAtt1;
+    public bool isAtt2;
     [HideInInspector] public float attackRange = 0.5f;
     [HideInInspector] public float attackDamage = 20;
     [HideInInspector] public float attackRate = 2f; //nº of attacks/sg
@@ -20,7 +22,7 @@ public class BarbarianController : PlayerController
     [HideInInspector] float nextAttackTime = 0f;
     [HideInInspector] float nextAbility1Time = 5f;
     [HideInInspector] float ability1Rate = 0.20f;
-    [HideInInspector] int aux = 0;
+    public int aux = 0;//[HideInInspector]
     public AudioClip aa1;
     public AudioClip aa2;
     public GameObject hitPoint; 
@@ -34,6 +36,7 @@ public class BarbarianController : PlayerController
     //-----------------------ABILITY1-------------------------------//
 
     public GameObject Ability1Collider;
+    [HideInInspector] public float ab1AttackDmg = 0f;
     private float ability1ColliderTime = 3f;
 
     //-----------------------ABILITY2-------------------------------//
@@ -47,14 +50,18 @@ public class BarbarianController : PlayerController
 
     public override void Start()
     {
+        inputH = GetComponentInChildren<InputHolders>();
         hpRestoring = GetComponent<HealthRestoring>();
         base.Start();
-        barbarianAnimator = GetComponent<Animator>();
+        barbarianAnimator = this.GetComponentInChildren<Animator>();
         maxTimeSinceHitten = 20f; 
         furyBar = GameObject.FindGameObjectWithTag("FuryP" + (GetPlayerIndex() + 1).ToString()).GetComponent<RectTransform>();
-    }
+        Ability1Collider.GetComponent<HammerSmashColliderFunction>().player = gameObject.GetComponent<BarbarianController>();
+        Ability1Collider.GetComponent<HammerSmashColliderFunction>().enemymask = enemyLayers;
 
-    public override void Update()
+}
+
+public override void Update()
     {
         base.Update();
         if (inputH.attackInput == 1)
@@ -62,15 +69,15 @@ public class BarbarianController : PlayerController
             Debug.Log(gameObject.name + ": I am attacking");
             if (Time.time >= nextAttackTime)
             {
-
+                if (!isIdle && isAtt1)
+                    SaveRotation();//previousRotation = rotation.transform.rotation;
                 Attack();
                 nextAttackTime = Time.time + 1f / attackRate;
 
             }
         }
         inputH.attackInput = 0;
-
-        //hacer esto en el otro lao o que !!!!!!!debugear 
+        
 
         timePassedSinceHitten += Time.deltaTime;
 
@@ -82,26 +89,37 @@ public class BarbarianController : PlayerController
         }
     }
 
-    public override void FixedUpdate() 
+    public override void FixedUpdate()
     {
-        base.FixedUpdate();
-        
+        Move(barbarianAnimator);
+        if (barbarianAnimator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
+            aux = 0;
     }
 
+    public override void Move(Animator player)
+    {
+        base.Move(barbarianAnimator);
+    }
 
     public override void Attack()
     {
+        bool shouldFury = false;
+        barbarianAnimator.SetBool("Running", false);
+        base.Attack();
+
         if(aux <= 0)
         {
             GetComponent<AudioSource>().PlayOneShot(aa1);
-            barbarianAnimator.SetTrigger("BarbarianAA");
-            aux++;
+            barbarianAnimator.SetTrigger("Attack");
+            aux = 1;
+            doubleAttack = true;
         }
         else
         {
             GetComponent<AudioSource>().PlayOneShot(aa2);
-            barbarianAnimator.SetTrigger("BarbarianAA2");
+            barbarianAnimator.SetTrigger("Attack2");
             aux = 0;
+            doubleAttack = false;
         }
 
         Collider[] hitten = Physics.OverlapCapsule(attackPointMin.position, attackPointMax.position, attackRange, enemyLayers); 
@@ -112,6 +130,11 @@ public class BarbarianController : PlayerController
             if (obj.transform.GetComponent<SkeletonRagdoll>() && obj.transform.GetComponent<SkeletonController>().risen == true)
             {
                 SkeletonRagdoll skeleton = obj.transform.GetComponent<SkeletonRagdoll>();
+                if (obj.transform.GetComponent<SkeletonController>().agentState != EnemyAgent.AgentStates.Ragdolled)
+                    shouldFury = true;
+                else
+                    shouldFury = false;
+
                 if (skeleton != null)
                 {
                     skeleton.Die();
@@ -142,12 +165,15 @@ public class BarbarianController : PlayerController
 
         }
 
-        if(hitten.Length > 0)
+        if(hitten.Length > 0 && shouldFury)
             IncrementFury();
 
         if(!hpRestoring.isAbility)
             timePassedSinceHitten = 0;
         hpRestoring.timePassedSinceHitten = timePassedSinceHitten; //reset si ataco al healing
+
+        //, 1.3f
+
     }
 
 
@@ -163,15 +189,11 @@ public class BarbarianController : PlayerController
 
     public void HammerSmash() 
     {
-
-        /* 
-         * call from there doDmg() funcion.
-         * 
-         */
-
+        barbarianAnimator.SetBool("Running", false);
+        RotateTowardsPointer();
         barbarianAnimator.SetTrigger("HammerSmash");
 
-            Debug.Log("Abilit1: HammerSmash used");
+        
 
         if (!hpRestoring.isAbility)
             timePassedSinceHitten = 0;
@@ -226,7 +248,7 @@ public class BarbarianController : PlayerController
         furyBar.sizeDelta = new Vector2(furyValue, furyBar.sizeDelta.y);
 
     }
-    void Explode()
+    public void Explode()
     {
         Debug.LogWarning("explode");
         
