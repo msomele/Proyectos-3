@@ -13,11 +13,12 @@ public class EnemyPull : MonoBehaviour
     bool enemyPoolSpawned;
     private float currenttime;
     private int currentIndexObjective;
+    private GameObject objectiveToFeed;
     //0,1,2 are gates
     //3 - 4 are main objectives (priority)
     void Start()
     {
-        //AsingObjectiveToPull();
+        AsingObjectiveToPull();
         DisableEnemies();
         enemyPoolSpawned = false;
     }
@@ -118,6 +119,11 @@ public class EnemyPull : MonoBehaviour
                 }
             }
         }
+        //If obelisck is down;
+        if (ObjectivesArray[3].GetComponent<DestructibleObjective>().isDestroyed == true)
+        {
+            return ObjectivesArray[4]; //go to statue(final)
+        }
         //if main gate is up but secondary gate is down
         if (ObjectivesArray[0].GetComponent<DestructibleObjective>().isDestroyed == false && ObjectivesArray[1].GetComponent<DestructibleObjective>().isDestroyed == true)
         {
@@ -156,11 +162,7 @@ public class EnemyPull : MonoBehaviour
                 return ObjectivesArray[1]; //go to secondarygate
             }
         }
-        //If obelisck is down;
-        if (ObjectivesArray[3].GetComponent<DestructibleObjective>().isDestroyed == true)
-        {
-            return ObjectivesArray[4]; //go to statue(final)
-        }
+
 
         //Debug.Log("A SITUATION IS NOT DEFINED, RETURNING Obelisk");
         return ObjectivesArray[3];
@@ -168,17 +170,22 @@ public class EnemyPull : MonoBehaviour
 
     void AsingObjectiveToPull()
     {
-        //Debug.Log("AsingObjectiveToPull");
+
+        //Find Objective to feed
         for (int i = 0; i < EnemiesToSpawn.Length; i++)
         {
             if (EnemiesToSpawn[i].GetComponent<SkeletonController>())
             {
+                objectiveToFeed = CheckIndexOfObjectivesToFeed(i);
+                int postion = CheckHitPositionsFreePosition();
                 //Debug.Log("I am" + EnemiesToSpawn[i].name);
                 //Debug.Log("My current objective is" + CheckIndexOfObjectivesToFeed(i).name);
                 //Debug.Log("Calling from" + gameObject.name);
-                EnemiesToSpawn[i].GetComponent<SkeletonController>().current_objective = CheckIndexOfObjectivesToFeed(i);
-            }
+                EnemiesToSpawn[i].GetComponent<SkeletonController>().current_objective = objectiveToFeed.GetComponent<DestructibleObjective>().HitPositions[postion];
+                objectiveToFeed.GetComponent<DestructibleObjective>().HitPositions[postion].GetComponent<HitPosition>().full = true;
 
+
+            }
 
             /*
             //Others
@@ -191,7 +198,29 @@ public class EnemyPull : MonoBehaviour
                 EnemiesToSpawn[i].GetComponent<GolemController>().current_objective = ObjectivesArray[0];
             }
             */
+
+            //Asing hit position of that objective we found early
+
         }
+
+        //Clear hit positions for next iteration
+        for (int l = 0; l < objectiveToFeed.GetComponent<DestructibleObjective>().HitPositions.Length - 1; l++)
+        {
+            objectiveToFeed.GetComponent<DestructibleObjective>().HitPositions[l].GetComponent<HitPosition>().full = false;
+        }
+
+    }
+
+    private int CheckHitPositionsFreePosition()
+    {
+        for (int j = 0; j < objectiveToFeed.GetComponent<DestructibleObjective>().HitPositions.Length -1; j++)
+        {
+            if (objectiveToFeed.GetComponent<DestructibleObjective>().HitPositions[j].GetComponent<HitPosition>().full == false)
+            {
+                return j;
+            }
+        }
+        return 4;
     }
 
     private void DisableEnemies()

@@ -27,7 +27,9 @@ public class MainMenuLogic : MonoBehaviour
     {if (SceneManager.GetActiveScene().name != ("Scenario"))
             BackToMainMenu();
         else
-            SelectPlayers = GameObject.FindObjectOfType<CharacterSelector>().gameObject;
+        {
+            // SelectPlayers = GameObject.FindObjectOfType<CharacterSelector>().gameObject;
+        }
     }
 
     public void BackToMainMenu()

@@ -28,8 +28,8 @@ public class SkeletonController : EnemyAgent
     {
         if (current_objective == null)
         {
-            current_objective = GameObject.FindWithTag("CurrentEnemyObjective");
-            current_destination = current_objective.transform.position;
+            //current_objective = GameObject.FindWithTag("ObjectiveLayer");
+            //current_destination = current_objective.transform.position;
         }
         rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
@@ -60,14 +60,15 @@ public class SkeletonController : EnemyAgent
         GetComponent<SkeletonRagdoll>().setRigidBodyState(true);
         GetComponent<SkeletonRagdoll>().setCollidersState(false);
         GetComponent<SkeletonRagdoll>().currentDisolveValue = 0f;
+        rb.isKinematic = true;
         StartCoroutine(RiseFormTheDead());
     }
 
     void Start()
     {
         if(current_objective == null ){
-            current_objective = GameObject.FindWithTag("CurrentEnemyObjective");
-            current_destination = current_objective.transform.position;
+            //current_objective = GameObject.FindWithTag("CurrentEnemyObjective");
+            //current_destination = current_objective.transform.position;
         }
         rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
@@ -172,6 +173,22 @@ public class SkeletonController : EnemyAgent
             if (current_objective.GetComponent<DestructibleObjective>())
             {
                 current_objective.GetComponent<DestructibleObjective>().TakeDamage(attack_damage);
+                if (current_objective.GetComponentInParent(typeof(Animator)))
+                {
+                    Animator objectiveAnimator = current_objective.GetComponentInParent(typeof(Animator)) as Animator;
+                    objectiveAnimator.Play("Hit");
+                }
+            }
+            if (current_objective.GetComponent<HitPosition>())
+            {
+                DestructibleObjective objective = current_objective.GetComponentInParent(typeof(DestructibleObjective)) as DestructibleObjective;
+                objective.TakeDamage(attack_damage);
+                if (objective.GetComponentInParent(typeof(Animator)))
+                {
+                    Animator objectiveAnimator = objective.GetComponentInParent(typeof(Animator)) as Animator;
+                    objectiveAnimator.Play("Hit");
+                }
+
             }
         }
         else

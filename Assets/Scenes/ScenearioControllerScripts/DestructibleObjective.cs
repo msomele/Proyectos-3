@@ -10,9 +10,13 @@ public class DestructibleObjective : MonoBehaviour
     public bool hasPriority;
     public bool updateAIObjectives;
     private bool doOnce;
-
+    public GameObject[] HitPositions;
     private void Start()
     {
+        for (int i = 0; i < HitPositions.Length; i++)
+        {
+            HitPositions[i].GetComponent<HitPosition>().full = false;
+        }
         doOnce = true;
         updateAIObjectives = false;
         isDestroyed = false;

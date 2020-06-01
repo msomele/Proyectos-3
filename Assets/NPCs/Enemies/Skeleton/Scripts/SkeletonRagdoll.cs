@@ -16,6 +16,7 @@ public class SkeletonRagdoll : MonoBehaviour
         skeletonController = GetComponent<SkeletonController>();
         childrenRenderer = GetComponentsInChildren<SkinnedMeshRenderer>();
         setRigidBodyState(true);
+        GetComponent<Rigidbody>().isKinematic = true;
         setCollidersState(false);
     }
 
