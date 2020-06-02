@@ -21,6 +21,8 @@ public class SkeletonController : EnemyAgent
     [HideInInspector]
     public bool risen;
 
+    private GameObject[] objectives;
+
     private Rigidbody rb;
     // Start is called before the first frame update
 
@@ -28,8 +30,8 @@ public class SkeletonController : EnemyAgent
     {
         if (current_objective == null)
         {
-            //current_objective = GameObject.FindWithTag("ObjectiveLayer");
-            //current_destination = current_objective.transform.position;
+            objectives = GameObject.FindGameObjectsWithTag("CurrentEnemyObjective");
+            current_destination = GetClosestObjective(objectives).transform.position;
         }
         rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
@@ -41,8 +43,6 @@ public class SkeletonController : EnemyAgent
         agent = GetComponent<NavMeshAgent>();
         animController = gameObject.GetComponent<SkeletonAnimationController>();
         animController.attack = false;
-        //current_objective = GameObject.FindWithTag("CurrentEnemyObjective");
-        //current_destination = current_objective.transform.position;
         roar = RandomizeBool();
         timeSpawning = roar ? 6.5f : 5f;
 
@@ -64,11 +64,33 @@ public class SkeletonController : EnemyAgent
         StartCoroutine(RiseFormTheDead());
     }
 
+    GameObject GetClosestObjective(GameObject[] objectives)
+    {
+        float CurrentMinDistance = 50000;
+        GameObject objective = null;
+        for (int i = 0; i < objectives.Length; i++)
+        {
+            if (objectives[i].GetComponent<DestructibleObjective>().isDestroyed == false)
+            {
+                float distance = Vector3.Distance(transform.position, objectives[i].transform.position);
+                if (distance < CurrentMinDistance)
+                {
+                    CurrentMinDistance = distance;
+                    objective = objectives[i];
+                }
+            }
+
+        }
+        return objective;
+    }
+
     void Start()
     {
-        if(current_objective == null ){
-            //current_objective = GameObject.FindWithTag("CurrentEnemyObjective");
-            //current_destination = current_objective.transform.position;
+        if (current_objective == null)
+        {
+            objectives = GameObject.FindGameObjectsWithTag("CurrentEnemyObjective");
+            current_objective = GetClosestObjective(objectives);
+            current_destination = current_objective.transform.position;
         }
         rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
@@ -99,6 +121,7 @@ public class SkeletonController : EnemyAgent
         GetComponent<SkeletonRagdoll>().setRigidBodyState(true);
         GetComponent<SkeletonRagdoll>().setCollidersState(false);
         GetComponent<SkeletonRagdoll>().currentDisolveValue = 0f;
+        rb.isKinematic = true;
         StartCoroutine(RiseFormTheDead());
     }
 
@@ -107,6 +130,14 @@ public class SkeletonController : EnemyAgent
     {
         if (agentState != AgentStates.Dead) {
             current_destination = current_objective.transform.position;
+            if (current_objective.GetComponent<DestructibleObjective>())
+            {
+                if (current_objective.GetComponent<DestructibleObjective>().isDestroyed == true)
+                {
+                    current_objective = GetClosestObjective(objectives);
+                }
+            }
+
             if (risen && agentState != AgentStates.Ragdolled)
             {
                 SetDestinationPoint(current_destination);

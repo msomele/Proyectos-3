@@ -11,6 +11,7 @@ public class DestructibleObjective : MonoBehaviour
     public bool updateAIObjectives;
     private bool doOnce;
     public GameObject[] HitPositions;
+    public Animator animator;
     private void Start()
     {
         for (int i = 0; i < HitPositions.Length; i++)
@@ -46,5 +47,9 @@ public class DestructibleObjective : MonoBehaviour
         updateAIObjectives = true;
         //Do destroy function here;
         gameObject.GetComponent<MeshCollider>().enabled = false;
+        if (animator != null)
+        {
+            animator.SetBool("Broken", true);
+        }
     }
 }

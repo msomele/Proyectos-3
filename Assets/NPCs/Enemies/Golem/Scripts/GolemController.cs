@@ -24,7 +24,7 @@ public class GolemController : EnemyAgent
     private float currentDisolveValue;
     // Start is called before the first frame update
 
-    void Start()
+    void OnEnable()
     {
         currentDisolveValue = 1;
         rb = GetComponent<Rigidbody>();
@@ -117,13 +117,16 @@ public class GolemController : EnemyAgent
     {
         if (IsObjectiveOnAttackRange(range))
         {
-            Debug.Log("Ataque Golem");
-            /*
-             if (current_objective.GetComponent<PlayerHealth>())
-             {
-                 current_objective.GetComponent<PlayerHealth>().DeductHealth(attack_damage);
-             }
-            */
+            if (current_objective.GetComponent<HitPosition>())
+            {
+                DestructibleObjective objective = current_objective.GetComponentInParent(typeof(DestructibleObjective)) as DestructibleObjective;
+                objective.TakeDamage(attack_damage);
+                if (objective.GetComponentInParent(typeof(Animator)))
+                {
+                    Animator objectiveAnimator = objective.GetComponentInParent(typeof(Animator)) as Animator;
+                    objectiveAnimator.Play("Hit");
+                }
+            }
         }
     }
 

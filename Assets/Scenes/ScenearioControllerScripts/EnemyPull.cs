@@ -174,6 +174,7 @@ public class EnemyPull : MonoBehaviour
         //Find Objective to feed
         for (int i = 0; i < EnemiesToSpawn.Length; i++)
         {
+            //Skeleton
             if (EnemiesToSpawn[i].GetComponent<SkeletonController>())
             {
                 objectiveToFeed = CheckIndexOfObjectivesToFeed(i);
@@ -183,24 +184,26 @@ public class EnemyPull : MonoBehaviour
                 //Debug.Log("Calling from" + gameObject.name);
                 EnemiesToSpawn[i].GetComponent<SkeletonController>().current_objective = objectiveToFeed.GetComponent<DestructibleObjective>().HitPositions[postion];
                 objectiveToFeed.GetComponent<DestructibleObjective>().HitPositions[postion].GetComponent<HitPosition>().full = true;
-
-
             }
 
-            /*
-            //Others
+            //Lich
             if (EnemiesToSpawn[i].GetComponent<LichController>())
             {
-                EnemiesToSpawn[i].GetComponent<LichController>().current_objective = ObjectivesArray[0];
+                objectiveToFeed = CheckIndexOfObjectivesToFeed(i);
+                int postion = CheckHitPositionsFreePosition();
+                EnemiesToSpawn[i].GetComponent<LichController>().current_objective = objectiveToFeed.GetComponent<DestructibleObjective>().HitPositions[postion];
+                objectiveToFeed.GetComponent<DestructibleObjective>().HitPositions[postion].GetComponent<HitPosition>().full = true;
             }
+
+            //Golem
             if (EnemiesToSpawn[i].GetComponent<GolemController>())
             {
-                EnemiesToSpawn[i].GetComponent<GolemController>().current_objective = ObjectivesArray[0];
+                objectiveToFeed = CheckIndexOfObjectivesToFeed(i);
+                int postion = CheckHitPositionsFreePosition();
+                EnemiesToSpawn[i].GetComponent<GolemController>().current_objective = objectiveToFeed.GetComponent<DestructibleObjective>().HitPositions[postion];
+                objectiveToFeed.GetComponent<DestructibleObjective>().HitPositions[postion].GetComponent<HitPosition>().full = true;
             }
-            */
-
             //Asing hit position of that objective we found early
-
         }
 
         //Clear hit positions for next iteration

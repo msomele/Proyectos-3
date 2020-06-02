@@ -8,7 +8,8 @@ public class ProjectileMoveScript : MonoBehaviour {
 	[Tooltip("From 0% to 100%")]
 	public float accuracy;
 	public float fireRate;
-	public GameObject muzzlePrefab;
+    public float proyectileDamage;
+    public GameObject muzzlePrefab;
 	public GameObject hitPrefab;
 	public AudioClip shotSFX;
 	public AudioClip hitSFX;
@@ -22,7 +23,7 @@ public class ProjectileMoveScript : MonoBehaviour {
 	void Start () {	
 		rb = GetComponent <Rigidbody> ();
 
-		//used to create a radius for the accuracy and have a very unique randomness
+		//Create a radius for the accuracy and have a very unique randomness
 		if (accuracy != 100) {
 			accuracy = 1 - (accuracy / 100);
 
@@ -71,8 +72,22 @@ public class ProjectileMoveScript : MonoBehaviour {
 
             if (co.transform.tag == "Player")
             {
-                Debug.Log("LichAttack");
+               // Debug.Log("LichAttackPlayer");
             }
+            if (co.transform.tag == "CurrentEnemyObjective")
+            {
+                if (co.transform.GetComponent<DestructibleObjective>())
+                {
+                    co.transform.GetComponent<DestructibleObjective>().TakeDamage(proyectileDamage);
+                    if (co.transform.GetComponentInParent(typeof(Animator)))
+                    {
+                        Animator objectiveAnimator = co.transform.GetComponentInParent(typeof(Animator)) as Animator;
+                        objectiveAnimator.Play("Hit");
+                    }
+                }
+            }
+
+
             Destroy(gameObject);
 
             if (shotSFX != null && GetComponent<AudioSource>()) {

@@ -22,7 +22,7 @@ public class LichProjectile : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.transform.tag == "Player")
+        if (collision.transform.tag == "Player" || collision.transform.tag == "CurrentEnemyObjective")
         {
             Debug.Log("LichAttack");
         }

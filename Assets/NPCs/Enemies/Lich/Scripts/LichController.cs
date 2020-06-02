@@ -31,7 +31,7 @@ public class LichController : EnemyAgent
     public GameObject bulletSpawnPostion;
     private float nextDamageEvent;
 
-    void Start()
+    void OnEnable()
     {
         nextDamageEvent = 0f;
         currentDisolveValue = 1f;
@@ -50,8 +50,11 @@ public class LichController : EnemyAgent
         agentState = AgentStates.Idle;
         range = attackRange;
         agent = GetComponent<NavMeshAgent>();
-        current_objective = GameObject.FindWithTag("CurrentEnemyObjective");
-        current_destination = current_objective.transform.position;
+        if (current_objective == null)
+        {
+            current_objective = GameObject.FindWithTag("CurrentEnemyObjective");
+            current_destination = current_objective.transform.position;
+        }
         StartCoroutine(Materialize(1f));
         StartCoroutine(Spawn());
         agent.stoppingDistance = attackRange - 0.5f;
@@ -158,7 +161,7 @@ public class LichController : EnemyAgent
         }
         else
         {
-            Debug.Log("Check");
+            //Debug.Log("Check");
             summongAmount = CheckNumSkeletonsToSpawn();
             for (int i = 0; i < maxSummons; i++)
             {
