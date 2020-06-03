@@ -17,6 +17,11 @@ public class MainMenuLogic : MonoBehaviour
     public GameObject gameplayOptions;
     public GameObject soundOptions;
     public GameObject controlOptions;
+
+    public GameObject selectedSpriteVideo;
+    public GameObject selectedSpriteControls;
+    public GameObject selectedSpriteGameplay;
+    public GameObject selectedSpriteSound;
     [Header("CharactersMenu")]
     public GameObject SelectPlayers;
     [Header("Animations")]
@@ -72,10 +77,16 @@ public class MainMenuLogic : MonoBehaviour
 
     public void OptionsMenuVideo()
     {
+
         videoOptions.SetActive(true);
         gameplayOptions.SetActive(false);
         soundOptions.SetActive(false);
         controlOptions.SetActive(false);
+
+        selectedSpriteVideo.SetActive(true);
+        selectedSpriteControls.SetActive(false);
+        selectedSpriteGameplay.SetActive(false);
+        selectedSpriteSound.SetActive(false);
     }
 
     public void OptionsMenuControlls()
@@ -84,6 +95,11 @@ public class MainMenuLogic : MonoBehaviour
         gameplayOptions.SetActive(false);
         soundOptions.SetActive(false);
         controlOptions.SetActive(true);
+
+        selectedSpriteVideo.SetActive(false);
+        selectedSpriteControls.SetActive(true);
+        selectedSpriteGameplay.SetActive(false);
+        selectedSpriteSound.SetActive(false);
     }
 
     public void OptionsMenuGameplay()
@@ -92,6 +108,11 @@ public class MainMenuLogic : MonoBehaviour
         gameplayOptions.SetActive(true);
         soundOptions.SetActive(false);
         controlOptions.SetActive(false);
+
+        selectedSpriteVideo.SetActive(false);
+        selectedSpriteControls.SetActive(false);
+        selectedSpriteGameplay.SetActive(true);
+        selectedSpriteSound.SetActive(false);
     }
 
     public void OptionsSound()
@@ -100,6 +121,11 @@ public class MainMenuLogic : MonoBehaviour
         gameplayOptions.SetActive(false);
         soundOptions.SetActive(true);
         controlOptions.SetActive(false);
+
+        selectedSpriteVideo.SetActive(false);
+        selectedSpriteControls.SetActive(false);
+        selectedSpriteGameplay.SetActive(false);
+        selectedSpriteSound.SetActive(true);
     }
 
 

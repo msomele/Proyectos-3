@@ -937,6 +937,10 @@ MonoBehaviour:
   characterSelectPanel: {fileID: 1734178349154550642}
   abilityPanel: {fileID: 8064966035182965912}
   characterSelector: {fileID: 5496006420139427998}
+  Barbarian3DModelP1: {fileID: 0}
+  Magician3DModelP1: {fileID: 0}
+  Barbarian3DModelP2: {fileID: 0}
+  Magician3DModelP2: {fileID: 0}
   characters:
   - {fileID: 21300000, guid: 3253924b025a0d6488da00a6a4a102a6, type: 3}
   - {fileID: 21300000, guid: 516b908fc517b4744b98292bd2914100, type: 3}
@@ -1448,6 +1452,7 @@ MonoBehaviour:
   ability: {fileID: 0}
   aCWeaponHolder: {fileID: 0}
   startsInReady: 0
+  coolDownDuration: 0
 --- !u!82 &5496006419023299215
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2381,6 +2386,7 @@ MonoBehaviour:
   ability: {fileID: 0}
   aCWeaponHolder: {fileID: 0}
   startsInReady: 0
+  coolDownDuration: 0
 --- !u!82 &5496006420215905334
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2997,6 +3003,10 @@ MonoBehaviour:
   characterSelectPanel: {fileID: 0}
   abilityPanel: {fileID: 0}
   characterSelector: {fileID: 0}
+  Barbarian3DModelP1: {fileID: 0}
+  Magician3DModelP1: {fileID: 0}
+  Barbarian3DModelP2: {fileID: 0}
+  Magician3DModelP2: {fileID: 0}
   characters: []
   p1Reference: {fileID: 0}
   p2Reference: {fileID: 0}
@@ -3134,6 +3144,10 @@ MonoBehaviour:
   characterSelectPanel: {fileID: 0}
   abilityPanel: {fileID: 0}
   characterSelector: {fileID: 0}
+  Barbarian3DModelP1: {fileID: 0}
+  Magician3DModelP1: {fileID: 0}
+  Barbarian3DModelP2: {fileID: 0}
+  Magician3DModelP2: {fileID: 0}
   characters: []
   p1Reference: {fileID: 0}
   p2Reference: {fileID: 0}
@@ -3235,6 +3249,7 @@ MonoBehaviour:
   ability: {fileID: 0}
   aCWeaponHolder: {fileID: 0}
   startsInReady: 0
+  coolDownDuration: 0
 --- !u!82 &5496006420851828592
 AudioSource:
   m_ObjectHideFlags: 0
@@ -4730,6 +4745,7 @@ MonoBehaviour:
   ability: {fileID: 0}
   aCWeaponHolder: {fileID: 0}
   startsInReady: 0
+  coolDownDuration: 0
 --- !u!82 &5496006420873919614
 AudioSource:
   m_ObjectHideFlags: 0
@@ -5018,6 +5034,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 47999ac1f17a1bc42928c452e36ceba8, type: 2}
   spawnP1Position: {x: 53, y: 1, z: 85}
   spawnP2Position: {x: 53, y: 1, z: 80}
+  weaponMarker1: {fileID: 0}
+  weaponMarker2: {fileID: 0}
 --- !u!1 &8128236502518696130
 GameObject:
   m_ObjectHideFlags: 0
