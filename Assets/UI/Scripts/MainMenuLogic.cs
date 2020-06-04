@@ -133,6 +133,7 @@ public class MainMenuLogic : MonoBehaviour
     ///
     public void ResumeGame()
     {
+        Time.timeScale = 1;
         MainMenu.SetActive(false);
         OptionsMenu.SetActive(false);
         Camera.main.GetComponentInChildren<PostProcessingRealtimeChanger>().ChangeFov(20);
@@ -152,6 +153,7 @@ public class MainMenuLogic : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space) && SceneManager.GetActiveScene().name == ("Scenario"))
         {
+            Time.timeScale = 0;
             BackToMainMenu();
             Camera.main.GetComponentInChildren<PostProcessingRealtimeChanger>().ChangeFov(0);
         }

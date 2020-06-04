@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class EnemyPull : MonoBehaviour
 {
-    //[HideInInspector]
+    [HideInInspector]
     public GameObject[] ObjectivesArray = new GameObject[4];
 
     public GameObject[] EnemiesToSpawn;
