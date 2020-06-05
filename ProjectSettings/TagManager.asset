@@ -13,6 +13,7 @@ TagManager:
   - Lich
   - MainMenu
   - Rotation
+  - Golem
   layers:
   - Default
   - TransparentFX

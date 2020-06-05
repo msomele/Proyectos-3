@@ -42,9 +42,9 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public bool doubleAttack;
     [HideInInspector] public Quaternion previousRotation;
     Quaternion curr;
-     //-------------------INPUTS-----------------------------------//
-     [Header("Inputs")]
-
+    //-------------------INPUTS-----------------------------------//
+    [Header("Inputs")]
+    public Sprite[] playersSprites = new Sprite[2];
     [SerializeField] private int playerIndex = 0;
     public InputHolders inputH;
     /*
@@ -85,9 +85,13 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         Cursor.visible = false;
 
+        this.gameObject.GetComponentInChildren<LookAtUI>().gameObject.GetComponent<SpriteRenderer>().sprite = playersSprites[playerIndex];
 
+      
 
     }
+
+    
     public virtual void Update()
     {
         Look();
