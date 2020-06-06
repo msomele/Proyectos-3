@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 697619641244431677}
   - component: {fileID: 709087219560266799}
   - component: {fileID: 716787945363258501}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: PBR_Rock (8)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -90,7 +90,7 @@ GameObject:
   - component: {fileID: 1802620371430812461}
   - component: {fileID: 1836747243719828031}
   - component: {fileID: 1826431913155961493}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: PBR_Rock (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -169,7 +169,7 @@ GameObject:
   - component: {fileID: 2463068408955327982}
   - component: {fileID: 2474672902106635516}
   - component: {fileID: 2482160847176719446}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: PBR_Rock (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -248,7 +248,7 @@ GameObject:
   - component: {fileID: 4741406863047290893}
   - component: {fileID: 4734833674843158815}
   - component: {fileID: 4724319865183500725}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: PBR_Rock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -327,7 +327,7 @@ GameObject:
   - component: {fileID: 5142800460135299822}
   - component: {fileID: 5127272906275517436}
   - component: {fileID: 5116685446583776086}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: PBR_Rock (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -406,7 +406,7 @@ GameObject:
   - component: {fileID: 6576880251379438416}
   - component: {fileID: 6574301017823631938}
   - component: {fileID: 6564346336200481512}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: PBR_Rock (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -485,7 +485,7 @@ GameObject:
   - component: {fileID: 6974471369646455465}
   - component: {fileID: 6967933447553004475}
   - component: {fileID: 6959951805119050513}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: PBR_Rock (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -562,7 +562,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7269506978023093626}
-  m_Layer: 14
+  m_Layer: 13
   m_Name: Index_Proximal_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -597,7 +597,8 @@ GameObject:
   - component: {fileID: 7274250222558426102}
   - component: {fileID: 7274250222558426100}
   - component: {fileID: 7274250222558426103}
-  m_Layer: 14
+  - component: {fileID: 5850167721506578611}
+  m_Layer: 13
   m_Name: Golem_Prefab
   m_TagString: Golem
   m_Icon: {fileID: 0}
@@ -639,7 +640,8 @@ Animator:
   m_LinearVelocityBlending: 0
   m_WarningMessage: "\nBinding warning: Some generic clip(s) animate transforms that
     are already bound by a Humanoid avatar. These transforms can only be changed
-    by Humanoid clips.\n\tTransform 'Hips'\n\tFrom animation clip 'Die'"
+    by Humanoid clips.\n\tTransform 'Hips'\n\tFrom animation clip 'Die'\n\tFrom animation
+    clip 'TakeDamage'"
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
@@ -709,7 +711,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   agent: {fileID: 0}
   agentState: 0
-  hp: 700
+  hp: 100
   attack_damage: 20
   speed: 0
   range: 0
@@ -717,11 +719,110 @@ MonoBehaviour:
   timeSpawning: 4
   current_destination: {x: 0, y: 0, z: 0}
   current_objective: {fileID: 0}
+  hitGateClip: {fileID: 8300000, guid: f1e08e4d793af3e4990fca897540f29e, type: 3}
+  dieClip: {fileID: 8300000, guid: 39b90fe6da508724689792e907af18a4, type: 3}
   minimum_Speed: 1
   maximun_Speed: 2
   nextAttack: 0
   risen: 0
   meleeRange: 4.6
+--- !u!82 &5850167721506578611
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7273488549710699998}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 24300002, guid: 299b534589de8424f9ac10f1769a5371,
+    type: 2}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 30.52673
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &7273501250994986844
 GameObject:
   m_ObjectHideFlags: 0
@@ -732,7 +833,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7276966297367502332}
   - component: {fileID: 7284955303853710002}
-  m_Layer: 14
+  m_Layer: 13
   m_Name: RockGolemMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -833,7 +934,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7269672882877044802}
-  m_Layer: 14
+  m_Layer: 13
   m_Name: Lower_Arm_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -864,7 +965,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7269907313085104100}
-  m_Layer: 14
+  m_Layer: 13
   m_Name: Hand_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -895,7 +996,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7274250221847618156}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: RockAnim
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -938,7 +1039,7 @@ GameObject:
   - component: {fileID: 7274250222117611321}
   - component: {fileID: 7274250222117611322}
   - component: {fileID: 7274250222117611301}
-  m_Layer: 16
+  m_Layer: 13
   m_Name: MovingShere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1009,7 +1110,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7277144379562987692}
-  m_Layer: 14
+  m_Layer: 13
   m_Name: joint1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1039,7 +1140,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7269688972864418692}
-  m_Layer: 14
+  m_Layer: 13
   m_Name: Foot_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1070,7 +1171,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7269662291604049442}
-  m_Layer: 14
+  m_Layer: 13
   m_Name: Hips
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1103,7 +1204,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7276998362396213638}
-  m_Layer: 14
+  m_Layer: 13
   m_Name: Lower_Arm_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1134,7 +1235,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7269776180370589034}
-  m_Layer: 14
+  m_Layer: 13
   m_Name: Foot_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1165,7 +1266,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7269742157116773112}
-  m_Layer: 14
+  m_Layer: 13
   m_Name: Toes_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1195,7 +1296,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7277129489989951950}
-  m_Layer: 14
+  m_Layer: 13
   m_Name: Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1226,7 +1327,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7276875526552697014}
-  m_Layer: 14
+  m_Layer: 13
   m_Name: Upper_Leg_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1257,7 +1358,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7269751514011091464}
-  m_Layer: 14
+  m_Layer: 13
   m_Name: Upper_Reg_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1288,7 +1389,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7269454453196189502}
-  m_Layer: 14
+  m_Layer: 13
   m_Name: Index_Proximal_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1318,7 +1419,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7269692984623278934}
-  m_Layer: 14
+  m_Layer: 13
   m_Name: Upper_Arm_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1349,7 +1450,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7269891640271449354}
-  m_Layer: 14
+  m_Layer: 13
   m_Name: Toes_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1379,7 +1480,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7269433793491066696}
-  m_Layer: 14
+  m_Layer: 13
   m_Name: Hand_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1410,7 +1511,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7276749756682122798}
-  m_Layer: 14
+  m_Layer: 13
   m_Name: Lower_Leg_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1441,7 +1542,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7269691069398752402}
-  m_Layer: 14
+  m_Layer: 13
   m_Name: Upper_Arm_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1472,7 +1573,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7269874048472882520}
-  m_Layer: 14
+  m_Layer: 13
   m_Name: Lower_Reg_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1503,7 +1604,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7276949410870390082}
-  m_Layer: 14
+  m_Layer: 13
   m_Name: Spine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1538,7 +1639,7 @@ GameObject:
   - component: {fileID: 7715288713298034341}
   - component: {fileID: 7740395260775806903}
   - component: {fileID: 7732343824586422045}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: PBR_Rock (7)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1617,7 +1718,7 @@ GameObject:
   - component: {fileID: 8537176955712320717}
   - component: {fileID: 8503776286160666079}
   - component: {fileID: 8513737049524616565}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: PBR_Rock (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1696,7 +1797,7 @@ GameObject:
   - component: {fileID: 8996026267366837159}
   - component: {fileID: 8980477229006242485}
   - component: {fileID: 8972496136395211295}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: PBR_Rock (9)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

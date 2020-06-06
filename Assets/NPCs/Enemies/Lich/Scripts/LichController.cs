@@ -30,9 +30,12 @@ public class LichController : EnemyAgent
     private float currentDisolveValue;
     public GameObject bulletSpawnPostion;
     private float nextDamageEvent;
+    private GameObject[] players;
+    public float attackPlayerRange;
 
     void OnEnable()
     {
+        players = GameObject.FindGameObjectsWithTag("Player");
         nextDamageEvent = 0f;
         currentDisolveValue = 1f;
         childrenRenderer = GetComponentsInChildren<SkinnedMeshRenderer>();
@@ -79,6 +82,14 @@ public class LichController : EnemyAgent
         current_destination = current_objective.transform.position;
         if (spawned)
         {
+            for (int i = 0; i < players.Length; i++)
+            {
+                if (IsPlayerOnAttackRange(players[i]))
+                {
+                    current_objective = players[i];
+                    current_destination = players[i].transform.position;
+                }
+            }
             SetDestinationPoint(current_destination);
             if (IsObjectiveOnAttackRange(range) && !summoning && nextDamageEvent > attackRate)
             {
@@ -134,7 +145,20 @@ public class LichController : EnemyAgent
         //Debug.Log(numSkeletonsToSpawn);
         return numSkeletonsToSpawn;
     }
-    
+
+    private bool IsPlayerOnAttackRange(GameObject player)
+    {
+        float currentDistance = Vector3.Distance(transform.position, player.transform.position);
+        if (currentDistance <= attackPlayerRange)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     private void SummongSkeletons()
     {
         bool ActualySummoned = false;
@@ -227,7 +251,6 @@ public class LichController : EnemyAgent
         SetDestinationPoint(current_destination);
         InitializeRandomSpeed(minimum_Speed, maximun_Speed);
         spawned = true;
-
     }
 
     private void OnDrawGizmos()

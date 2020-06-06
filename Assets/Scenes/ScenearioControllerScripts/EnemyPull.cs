@@ -18,6 +18,7 @@ public class EnemyPull : MonoBehaviour
     //3 - 4 are main objectives (priority)
     void Start()
     {
+        currenttime = 0f;
         AsingObjectiveToPull();
         DisableEnemies();
         enemyPoolSpawned = false;
@@ -174,34 +175,37 @@ public class EnemyPull : MonoBehaviour
         //Find Objective to feed
         for (int i = 0; i < EnemiesToSpawn.Length; i++)
         {
-            //Skeleton
-            if (EnemiesToSpawn[i].GetComponent<SkeletonController>())
+            if (EnemiesToSpawn[i] != null)
             {
-                objectiveToFeed = CheckIndexOfObjectivesToFeed(i);
-                int postion = CheckHitPositionsFreePosition();
-                //Debug.Log("I am" + EnemiesToSpawn[i].name);
-                //Debug.Log("My current objective is" + CheckIndexOfObjectivesToFeed(i).name);
-                //Debug.Log("Calling from" + gameObject.name);
-                EnemiesToSpawn[i].GetComponent<SkeletonController>().current_objective = objectiveToFeed.GetComponent<DestructibleObjective>().HitPositions[postion];
-                objectiveToFeed.GetComponent<DestructibleObjective>().HitPositions[postion].GetComponent<HitPosition>().full = true;
-            }
+                //Skeleton
+                if (EnemiesToSpawn[i].GetComponent<SkeletonController>())
+                {
+                    objectiveToFeed = CheckIndexOfObjectivesToFeed(i);
+                    int postion = CheckHitPositionsFreePosition();
+                    //Debug.Log("I am" + EnemiesToSpawn[i].name);
+                    //Debug.Log("My current objective is" + CheckIndexOfObjectivesToFeed(i).name);
+                    //Debug.Log("Calling from" + gameObject.name);
+                    EnemiesToSpawn[i].GetComponent<SkeletonController>().current_objective = objectiveToFeed.GetComponent<DestructibleObjective>().HitPositions[postion];
+                    objectiveToFeed.GetComponent<DestructibleObjective>().HitPositions[postion].GetComponent<HitPosition>().full = true;
+                }
 
-            //Lich
-            if (EnemiesToSpawn[i].GetComponent<LichController>())
-            {
-                objectiveToFeed = CheckIndexOfObjectivesToFeed(i);
-                int postion = CheckHitPositionsFreePosition();
-                EnemiesToSpawn[i].GetComponent<LichController>().current_objective = objectiveToFeed.GetComponent<DestructibleObjective>().HitPositions[postion];
-                objectiveToFeed.GetComponent<DestructibleObjective>().HitPositions[postion].GetComponent<HitPosition>().full = true;
-            }
+                //Lich
+                if (EnemiesToSpawn[i].GetComponent<LichController>())
+                {
+                    objectiveToFeed = CheckIndexOfObjectivesToFeed(i);
+                    int postion = CheckHitPositionsFreePosition();
+                    EnemiesToSpawn[i].GetComponent<LichController>().current_objective = objectiveToFeed.GetComponent<DestructibleObjective>().HitPositions[postion];
+                    objectiveToFeed.GetComponent<DestructibleObjective>().HitPositions[postion].GetComponent<HitPosition>().full = true;
+                }
 
-            //Golem
-            if (EnemiesToSpawn[i].GetComponent<GolemController>())
-            {
-                objectiveToFeed = CheckIndexOfObjectivesToFeed(i);
-                int postion = CheckHitPositionsFreePosition();
-                EnemiesToSpawn[i].GetComponent<GolemController>().current_objective = objectiveToFeed.GetComponent<DestructibleObjective>().HitPositions[postion];
-                objectiveToFeed.GetComponent<DestructibleObjective>().HitPositions[postion].GetComponent<HitPosition>().full = true;
+                //Golem
+                if (EnemiesToSpawn[i].GetComponent<GolemController>())
+                {
+                    objectiveToFeed = CheckIndexOfObjectivesToFeed(i);
+                    int postion = CheckHitPositionsFreePosition();
+                    EnemiesToSpawn[i].GetComponent<GolemController>().current_objective = objectiveToFeed.GetComponent<DestructibleObjective>().HitPositions[postion];
+                    objectiveToFeed.GetComponent<DestructibleObjective>().HitPositions[postion].GetComponent<HitPosition>().full = true;
+                }
             }
             //Asing hit position of that objective we found early
         }
@@ -258,6 +262,5 @@ public class EnemyPull : MonoBehaviour
         }
         enemyPoolSpawned = true;
         AsingObjectiveToPull();
-
     }
 }

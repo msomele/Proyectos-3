@@ -8,6 +8,8 @@ using TMPro;
 public class SettingsMenu : MonoBehaviour
 {
     public AudioMixer audioMixer;
+    public AudioMixer musicMixer;
+    public AudioMixer effectsMixer;
     Resolution[] resolutions;
     public TMP_Dropdown resolutionDropdown;
 
@@ -38,6 +40,17 @@ public class SettingsMenu : MonoBehaviour
     {
         audioMixer.SetFloat("MasterVolume", volume);
     }
+
+    public void SetMusic(float volume)
+    {
+        musicMixer.SetFloat("MusicVolume", volume);
+    }
+
+    public void SetEffects(float volume)
+    {
+        effectsMixer.SetFloat("EffectsVolume", volume);
+    }
+
 
     public void SetQuality(int qualityIndex)
     {

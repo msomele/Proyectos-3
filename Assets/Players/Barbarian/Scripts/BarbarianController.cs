@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class BarbarianController : PlayerController 
  //Con heredar de PlayerController y en: Start, Update y FixedUpdate poner base.tatata() ya se mueve con el defaultSet.
 {
-
     public Animator barbarianAnimator;
     public LayerMask enemyLayers;
     public LayerMask explosionLayers;
@@ -61,12 +60,12 @@ public class BarbarianController : PlayerController
 
 }
 
-public override void Update()
+    public override void Update()
     {
         base.Update();
         if (inputH.attackInput == 1)
         {
-            Debug.Log(gameObject.name + ": I am attacking");
+            //Debug.Log(gameObject.name + ": I am attacking");
             if (Time.time >= nextAttackTime)
             {
                 if (!isIdle && isAtt1)
@@ -125,7 +124,7 @@ public override void Update()
         Collider[] hitten = Physics.OverlapCapsule(attackPointMin.position, attackPointMax.position, attackRange, enemyLayers); 
         foreach (Collider obj in hitten)
         {
-            Debug.Log("Damage dealed to ->" + obj.name);
+            //Debug.Log("Damage dealed to ->" + obj.name);
 
             if (obj.transform.GetComponent<SkeletonRagdoll>() && obj.transform.GetComponent<SkeletonController>().risen == true)
             {
@@ -142,25 +141,14 @@ public override void Update()
                 Explode();
             }
 
-
             if (obj.transform.GetComponent<LichController>())
             {
-                LichController lich = obj.transform.GetComponent<LichController>();
-                if (lich != null)
-                {
-                    lich.TakeDamage(attackDamage);
-                }
-                Explode();
+                obj.transform.GetComponent<LichController>().TakeDamage(attackDamage);
             }
 
             if (obj.transform.GetComponent<GolemController>())
-            {
-                GolemController golem = obj.transform.GetComponent<GolemController>();
-                if (golem != null)
-                {
-                    golem.TakeDamage(attackDamage);
-                }
-                Explode();
+            {     
+                obj.transform.GetComponent<GolemController>().TakeDamage(attackDamage);
             }
 
         }
@@ -250,7 +238,7 @@ public override void Update()
     }
     public void Explode()
     {
-        Debug.LogWarning("explode");
+        //Debug.LogWarning("explode");
         
         Collider[] hitten = Physics.OverlapCapsule(attackPointMin.position, attackPointMax.position, attackRange, enemyLayers);
         foreach(Collider bone in hitten)
@@ -261,7 +249,6 @@ public override void Update()
                 rigidbody.AddExplosionForce(10000f, hitPoint.transform.position, 3f , 25f); //Normal
             }
         }
-      
     }
 
 

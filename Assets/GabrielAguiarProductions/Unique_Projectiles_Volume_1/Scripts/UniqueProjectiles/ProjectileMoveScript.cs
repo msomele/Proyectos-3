@@ -55,10 +55,6 @@ public class ProjectileMoveScript : MonoBehaviour {
 				Destroy (muzzleVFX, psChild.main.duration);
 			}
 		}
-
-		if (shotSFX != null && GetComponent<AudioSource>()) {
-			GetComponent<AudioSource> ().PlayOneShot (shotSFX);
-		}
 	}
 
 	void FixedUpdate () {	
@@ -72,7 +68,10 @@ public class ProjectileMoveScript : MonoBehaviour {
 
             if (co.transform.tag == "Player")
             {
-               // Debug.Log("LichAttackPlayer");
+                if (co.transform.GetComponent<BarbarianController>())
+                {
+                    co.transform.GetComponent<BarbarianController>().hp -= proyectileDamage;
+                }
             }
             if (co.transform.tag == "CurrentEnemyObjective")
             {
@@ -87,12 +86,7 @@ public class ProjectileMoveScript : MonoBehaviour {
                 }
             }
 
-
-            Destroy(gameObject);
-
-            if (shotSFX != null && GetComponent<AudioSource>()) {
-				GetComponent<AudioSource> ().PlayOneShot (hitSFX);
-			}
+            //Destroy(gameObject);
 
 			if (trails.Count > 0) {
 				for (int i = 0; i < trails.Count; i++) {

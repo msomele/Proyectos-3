@@ -6,7 +6,10 @@ using UnityEngine.AI;
 public class SkeletonController : EnemyAgent
 {
     public GameObject current_objective;
-    
+    [Header("Sound")]
+    public AudioSource audioSource;
+    public AudioClip attackClip;
+
     [Header("Speed")]
     public float minimum_Speed;
     public float maximun_Speed;
@@ -21,13 +24,19 @@ public class SkeletonController : EnemyAgent
     [HideInInspector]
     public bool risen;
 
+    public float attackPlayerRange;
+
     private GameObject[] objectives;
+    private GameObject[] players;
 
     private Rigidbody rb;
     // Start is called before the first frame update
 
     private void OnEnable()
     {
+
+        audioSource = GetComponent<AudioSource>();
+        players = GameObject.FindGameObjectsWithTag("Player");
         if (current_objective == null)
         {
             objectives = GameObject.FindGameObjectsWithTag("CurrentEnemyObjective");
@@ -125,6 +134,19 @@ public class SkeletonController : EnemyAgent
         StartCoroutine(RiseFormTheDead());
     }
 
+    private bool IsPlayerOnAttackRange(GameObject player)
+    {
+        float currentDistance = Vector3.Distance(transform.position, player.transform.position);
+        if (currentDistance <= attackPlayerRange)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -135,6 +157,15 @@ public class SkeletonController : EnemyAgent
                 if (current_objective.GetComponent<DestructibleObjective>().isDestroyed == true)
                 {
                     current_objective = GetClosestObjective(objectives);
+                }
+            }
+
+            for (int i = 0; i < players.Length; i++)
+            {
+                if (IsPlayerOnAttackRange(players[i]))
+                {
+                    current_objective = players[i];
+                    current_destination = players[i].transform.position;
                 }
             }
 
@@ -187,6 +218,7 @@ public class SkeletonController : EnemyAgent
     void Attack()
     {
         agentState = AgentStates.Attack;
+        
         animController.attack = true;
     }
 
@@ -194,18 +226,21 @@ public class SkeletonController : EnemyAgent
     {
         if (IsObjectiveOnAttackRange(range))
         {
-            //Debug.Log("Ataque Esqueleto");
-            /*
-             if (current_objective.GetComponent<PlayerHealth>())
-             {
-                 current_objective.GetComponent<PlayerHealth>().DeductHealth(attack_damage);
-             }
-            */
+            /*------------------------------------------------------------------------
+            //----------------PEGA AL JUGADOR EN ESTE IF------------------------------
+            --------------------------------------------------------------------------*/
+            if (current_objective.GetComponent<BarbarianController>())
+            {
+                audioSource.PlayOneShot(attackClip);
+                current_objective.GetComponent<BarbarianController>().hp -= attack_damage;
+            }
+
             if (current_objective.GetComponent<DestructibleObjective>())
             {
                 current_objective.GetComponent<DestructibleObjective>().TakeDamage(attack_damage);
                 if (current_objective.GetComponentInParent(typeof(Animator)))
                 {
+                    audioSource.PlayOneShot(attackClip);
                     Animator objectiveAnimator = current_objective.GetComponentInParent(typeof(Animator)) as Animator;
                     objectiveAnimator.Play("Hit");
                 }
@@ -216,6 +251,7 @@ public class SkeletonController : EnemyAgent
                 objective.TakeDamage(attack_damage);
                 if (objective.GetComponentInParent(typeof(Animator)))
                 {
+                    audioSource.PlayOneShot(attackClip);
                     Animator objectiveAnimator = objective.GetComponentInParent(typeof(Animator)) as Animator;
                     objectiveAnimator.Play("Hit");
                 }
@@ -267,5 +303,11 @@ public class SkeletonController : EnemyAgent
         SetDestinationPoint(current_destination);
         InitializeRandomSpeed(minimum_Speed, maximun_Speed);
         risen = true;
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.grey;
+        Gizmos.DrawWireSphere(transform.position, attackPlayerRange);
     }
 }

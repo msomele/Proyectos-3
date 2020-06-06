@@ -6,7 +6,10 @@ using UnityEngine.AI;
 public class GolemController : EnemyAgent
 {
     public GameObject current_objective;
-
+    [Header("Sound")]
+    public AudioClip hitGateClip;
+    public AudioClip dieClip;
+    private AudioSource audioSource;
     [Header("Speed")]
     public float minimum_Speed;
     public float maximun_Speed;
@@ -26,6 +29,7 @@ public class GolemController : EnemyAgent
 
     void OnEnable()
     {
+        audioSource = GetComponent<AudioSource>();
         currentDisolveValue = 1;
         rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
@@ -125,6 +129,7 @@ public class GolemController : EnemyAgent
                 {
                     Animator objectiveAnimator = objective.GetComponentInParent(typeof(Animator)) as Animator;
                     objectiveAnimator.Play("Hit");
+                    audioSource.PlayOneShot(hitGateClip);
                 }
             }
         }
@@ -173,7 +178,7 @@ public class GolemController : EnemyAgent
     {
         if (hp > 0f)
         {
-            animator.CrossFade("Take Damage", 0.2f);
+            animator.CrossFade("TakeDamage", 0.2f);
             hp -= damageAmount;
             if (hp <= 0f)
             {
@@ -191,6 +196,7 @@ public class GolemController : EnemyAgent
         agent.velocity = Vector3.zero;
         agent.enabled = false;
         Destroy(gameObject, 4f);
+        audioSource.PlayOneShot(dieClip);
     }
 
     public IEnumerator FadeOut(float duration)
