@@ -6,10 +6,37 @@ public class FindFunction : MonoBehaviour
 {
     public BarbarianController player;
     public GameObject hammerSmashCollider;
+    public ParticleSystem Ability1Particles;
+
+    public HealingParticleOnEnable Ability2Particles;
+
     void Start()
     {
         player = gameObject.GetComponentInParent<BarbarianController>();
+        //Ability2Particles = gameObject.GetComponentInChildren<HealingParticleOnEnable>();
+        //particulas = gameObject.GetComponentInChildren<ParticleSystem>();
         hammerSmashCollider = player.Ability1Collider;
+    }
+
+    public void ActivateHealingParticles()
+    {
+        Ability2Particles.gameObject.SetActive(true);
+    }
+    public void DeActivateHealingParticles()
+    {
+        Ability2Particles.gameObject.SetActive(false);
+    }
+
+
+
+
+    public void ActivateParticles()
+    {
+        Ability1Particles.gameObject.SetActive(true);
+    }
+    public void DeActivateParticles()
+    {
+        Ability1Particles.gameObject.SetActive(false);
     }
     public void ActivateCollider()
     {

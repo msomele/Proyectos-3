@@ -206,6 +206,7 @@ public class PlayerController : MonoBehaviour
             isGamePaused = true;
             Time.timeScale = 0f;
             myCamera.GetComponent<MainMenuLogic>().BackToMainMenu();
+            Cursor.visible = true;
         }
         else 
         {
@@ -213,6 +214,7 @@ public class PlayerController : MonoBehaviour
             Time.timeScale = 1f;
             Camera.main.GetComponentInChildren<PostProcessingRealtimeChanger>().ChangeFov(1);
             myCamera.GetComponent<MainMenuLogic>().ResumeGame();
+            Cursor.visible = false;
         }
     }
 

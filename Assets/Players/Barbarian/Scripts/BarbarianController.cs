@@ -31,6 +31,8 @@ public class BarbarianController : PlayerController
     public float timePassedSinceHitten = 0;
     public float maxTimeSinceHitten;
     public HealthRestoring hpRestoring;
+    public GameObject healingParticle;
+
     /************MAKE UPDATE TO hpRestoring.maxHealth WITH hp VARIABLE WHEN CHANGED **************/
 
     //-----------------------ABILITY1-------------------------------//
@@ -251,11 +253,13 @@ public class BarbarianController : PlayerController
         timePassedSinceHitten = maxTimeSinceHitten;
         hpRestoring.pointIncreasePerSecond = ab2HealingSpeed;
         StartCoroutine("WaitToSetHealing");
+        healingParticle.SetActive(true);
     }
     
     IEnumerator WaitToSetHealing()
     {
         yield return new WaitForSeconds(healingIncreasedTime);
+        healingParticle.SetActive(false);
         hpRestoring.pointIncreasePerSecond = baseHealingSpeed;
         hpRestoring.isAbility = false;
 
@@ -282,13 +286,14 @@ public class BarbarianController : PlayerController
     {
         furyValue += furyValueIncrement;
         if (furyValue > 140) furyValue = 140;
-        furyBar.sizeDelta = new Vector2(furyValue, furyBar.sizeDelta.y);
+            furyBar.GetComponent<Image>().fillAmount = furyValue / 140; //furyBar.sizeDelta = new Vector2(furyValue, furyBar.sizeDelta.y);
 
     }
     void ResetFury()
     {
         furyValue = 0;
-        furyBar.sizeDelta = new Vector2(furyValue, furyBar.sizeDelta.y);
+        furyBar.GetComponent<Image>().fillAmount = furyValue/140;
+        //furyBar.sizeDelta = new Vector2(furyValue, furyBar.sizeDelta.y);
 
     }
     public void Explode()

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class HealthRestoring : MonoBehaviour
 {
@@ -13,7 +14,10 @@ public class HealthRestoring : MonoBehaviour
     public float maxTimeSinceHitten;
     public bool isAbility;
     public RectTransform hpVisual;
-    private BarbarianController player;    
+    private BarbarianController player;
+
+    public ScenarioController scenarioController;
+
     private void Start()
     {
         player = this.GetComponent<BarbarianController>();
@@ -25,22 +29,28 @@ public class HealthRestoring : MonoBehaviour
         timePassedSinceHitten = player.timePassedSinceHitten;
         maxTimeSinceHitten = player.maxTimeSinceHitten;
         updatedHealth = maxHealth;
+        scenarioController = GameObject.FindObjectOfType<ScenarioController>();
+
     }
     private void Update()
     {
-            hpVisual.sizeDelta = new Vector2(updatedHealth/2, hpVisual.sizeDelta.y);
+            hpVisual.GetComponent<Image>().fillAmount = updatedHealth / maxHealth;
+           // hpVisual.sizeDelta = new Vector2(updatedHealth/2, hpVisual.sizeDelta.y);
 
         if (updatedHealth >= maxHealth) updatedHealth = maxHealth;
-        if (updatedHealth < 0)
+        if (updatedHealth <= 0)
         {
             updatedHealth = 0;
-            hpVisual.sizeDelta = new Vector2(updatedHealth, hpVisual.sizeDelta.y);
+            hpVisual.GetComponent<Image>().fillAmount = updatedHealth / maxHealth;
+            scenarioController.PlayerDied = true; 
+            //hpVisual.sizeDelta = new Vector2(updatedHealth / 2, hpVisual.sizeDelta.y);
         }
         //default health regeneration
         if(timePassedSinceHitten >= maxTimeSinceHitten)
         {
             updatedHealth += pointIncreasePerSecond * Time.deltaTime;
-            hpVisual.sizeDelta = new Vector2(updatedHealth, hpVisual.sizeDelta.y);
+            hpVisual.GetComponent<Image>().fillAmount = updatedHealth / maxHealth;
+            //hpVisual.sizeDelta = new Vector2(updatedHealth / 2, hpVisual.sizeDelta.y);
         }
     }
 }

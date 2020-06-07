@@ -150,6 +150,7 @@ public class MainMenuLogic : MonoBehaviour
     {
         Time.timeScale = 1;
         SelectPlayers.SetActive(false);
+        Camera.main.GetComponentInChildren<PostProcessingRealtimeChanger>().ChangeFov(20);
         SceneManager.LoadScene(Scene2LoadName);
     }
 

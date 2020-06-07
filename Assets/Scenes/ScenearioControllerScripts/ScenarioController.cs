@@ -20,10 +20,13 @@ public class ScenarioController : MonoBehaviour
     public GameObject FinalUI;
     public BBDDconnection bbdd;
 
-    private bool bbddConnection; 
+    private bool bbddConnection;
+    public bool PlayerDied;
+    public MainMenuLogic menuLogic; 
 
     private void Start()
     {
+        PlayerDied = false; 
         bbddConnection = false; 
         Time.timeScale = 1f;
         for (int i = 0; i < starsGameObject.Length-1; i++)
@@ -32,10 +35,14 @@ public class ScenarioController : MonoBehaviour
         }
         gameEnded = false;
         gameTime = 0f;
+        menuLogic = GameObject.FindObjectOfType<MainMenuLogic>();
     }
 
     private void Update()
     {
+        if(PlayerDied)
+            gameEnded = true; 
+        
         if (ObjectivesArray[4].GetComponent<DestructibleObjective>().isDestroyed == true)
         {
             gameEnded = true;
@@ -46,45 +53,68 @@ public class ScenarioController : MonoBehaviour
         }
         else
         {
-            FinalUI.SetActive(true);
-            starsEarned = 0;
-            if (ObjectivesArray[4].GetComponent<DestructibleObjective>().isDestroyed == false)
+            Camera.main.GetComponentInChildren<PostProcessingRealtimeChanger>().ChangeFov(0);
+            Cursor.visible = true;
+            menuLogic.SelectPlayers.SetActive(false);
+            
+
+            if (PlayerDied)
             {
-                starsEarned += 1;
-            }
-            if (ObjectivesArray[3].GetComponent<DestructibleObjective>().isDestroyed == false)
-            {
-                starsEarned += 1;
-            }
-            if (ObjectivesArray[0].GetComponent<DestructibleObjective>().isDestroyed == false)
-            {
-                starsEarned += 1;
-            }
-            for (int i = 0; i < starsEarned; i++)
-            {
-                if (!starsGameObject[i].activeSelf)
+                starsEarned = 0;
+                FinalUI.SetActive(true);
+                DefeatText.SetActive(true);
+                VictoryText.SetActive(false);
+                timePasedText.text = ConvertSecondsToTimeString(gameTime);
+                if (!bbddConnection)
                 {
-                    starsGameObject[i].SetActive(true);
+                    bbdd.UpdateDatabase(starsEarned, ConvertSecondsToTimeString(gameTime));
+                    bbddConnection = true;
                 }
-                
-            }
-            if (starsEarned > 0)
-            {
-                VictoryText.SetActive(true);
-                DefeatText.SetActive(false);
-            }
+            }   
             else
             {
-                VictoryText.SetActive(false);
-                DefeatText.SetActive(true);
-            }
+                FinalUI.SetActive(true);
+                starsEarned = 0;
+                if (ObjectivesArray[4].GetComponent<DestructibleObjective>().isDestroyed == false)
+                {
+                    starsEarned += 1;
+                }
+                if (ObjectivesArray[3].GetComponent<DestructibleObjective>().isDestroyed == false)
+                {
+                    starsEarned += 1;
+                }
+                if (ObjectivesArray[0].GetComponent<DestructibleObjective>().isDestroyed == false)
+                {
+                    starsEarned += 1;
+                }
+                for (int i = 0; i < starsEarned; i++)
+                {
+                    if (!starsGameObject[i].activeSelf)
+                    {
+                        starsGameObject[i].SetActive(true);
+                    }
 
-            timePasedText.text = ConvertSecondsToTimeString(gameTime);
-            if(!bbddConnection)
-            {
-                bbdd.UpdateDatabase(starsEarned, ConvertSecondsToTimeString(gameTime));
-                bbddConnection = true; 
+                }
+                if (starsEarned > 0)
+                {
+                    VictoryText.SetActive(true);
+                    DefeatText.SetActive(false);
+                }
+                else
+                {
+                    VictoryText.SetActive(false);
+                    DefeatText.SetActive(true);
+                }
+
+                timePasedText.text = ConvertSecondsToTimeString(gameTime);
+                if (!bbddConnection)
+                {
+                    bbdd.UpdateDatabase(starsEarned, ConvertSecondsToTimeString(gameTime));
+                    bbddConnection = true;
+                }
+
             }
+            
         }
         
     }

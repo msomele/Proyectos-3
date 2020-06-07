@@ -4,3 +4,8 @@
 {"estrellas":3,"tiempo":"00:00:06"}
 {"estrellas":3,"tiempo":"00:00:03"}
 {"estrellas":3,"tiempo":"00:00:21"}
+{"estrellas":0,"tiempo":"00:00:45"}
+{"estrellas":0,"tiempo":"00:00:13"}
+{"estrellas":0,"tiempo":"00:00:46"}
+{"estrellas":0,"tiempo":"00:00:09"}
+{"estrellas":0,"tiempo":"00:01:12"}
