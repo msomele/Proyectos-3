@@ -60,4 +60,28 @@ public class FindFunction : MonoBehaviour
 
         }
     }
+    public void NoAb1()
+    {
+        if(player!=null)
+        {
+            player.StartCoroutine(player.NowCanMove(player.barbarianAnimator));
+        }
+    }
+
+
+
+    public void TriggerAA()
+    {
+        player.TriggerDmgAAAction();
+    }
+    public void TriggerHab1()
+    {
+        player.TriggerDmgAb1Action();
+    }
+
+
+
+
+
+
 }

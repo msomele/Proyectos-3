@@ -232,7 +232,7 @@ public class SkeletonController : EnemyAgent
             if (current_objective.GetComponent<BarbarianController>())
             {
                 audioSource.PlayOneShot(attackClip);
-                current_objective.GetComponent<BarbarianController>().hp -= attack_damage;
+                current_objective.GetComponent<HealthRestoring>().updatedHealth -= attack_damage;
             }
 
             if (current_objective.GetComponent<DestructibleObjective>())

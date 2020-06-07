@@ -6,6 +6,7 @@ using UnityEngine;
 public class CharacterSelector : MonoBehaviour
 {   
     public CharacterClass[] characters;
+    public CharacterClass barbAux;
     public Vector3 spawnP1Position = new Vector3(53 , 1 , 85 );
     public Vector3 spawnP2Position = new Vector3(53 , 1 , 80);
     public WeaponMarker weaponMarker1;
@@ -35,7 +36,17 @@ public class CharacterSelector : MonoBehaviour
         }
         if (auxi >= 1)
         {
-            GameObject spawnedPlayer = Instantiate(selectedCharacter.playerPrefab, spawnP2Position, Quaternion.identity) as GameObject; //playerprefab que sea lo usado en inputsystem pa instanciar!!!!!!
+            GameObject spawnedPlayer;
+            if (characterChoice==0)
+            {
+                spawnedPlayer = Instantiate(barbAux.playerPrefab, spawnP2Position, Quaternion.identity) as GameObject; //playerprefab que sea lo usado en inputsystem pa instanciar!!!!!!
+            }
+            else
+            {
+                spawnedPlayer = Instantiate(selectedCharacter.playerPrefab, spawnP2Position, Quaternion.identity) as GameObject; //playerprefab que sea lo usado en inputsystem pa instanciar
+            }
+
+
             spawnedPlayer.GetComponent<PlayerController>()._playerIndex = 1;
             weaponMarker2 = spawnedPlayer.GetComponentInChildren<WeaponMarker>();
 
@@ -46,15 +57,27 @@ public class CharacterSelector : MonoBehaviour
         {
             for (int i = 0; i < coolDownButtons.Length; i++)
             {
-                coolDownButtons[i].Initialize(selectedCharacter.characterAbilities[i], weaponMarker1.gameObject); //inicializar dichos botones
+                coolDownButtons[i].Initialize(selectedCharacter.characterAbilities[i], weaponMarker1.gameObject, selectedCharacter.characterAbilities[i].aSprite); //inicializar dichos botones
             }
 
         }
         if (auxi >= 1)
         {
-            for (int i = 0; i < coolDownButtons.Length; i++)
+            if (characterChoice == 0)
             {
-                coolDownButtons[i].Initialize(selectedCharacter.characterAbilities[i], weaponMarker2.gameObject); //inicializar dichos botones
+                for (int i = 0; i < coolDownButtons.Length; i++)
+                {
+                    coolDownButtons[i].Initialize(barbAux.characterAbilities[i], weaponMarker2.gameObject, selectedCharacter.characterAbilities[i].aSprite); //inicializar dichos botones
+                }
+
+            }
+
+            else
+            {
+                for (int i = 0; i < coolDownButtons.Length; i++)
+                {
+                    coolDownButtons[i].Initialize(selectedCharacter.characterAbilities[i], weaponMarker2.gameObject, selectedCharacter.characterAbilities[i].aSprite); //inicializar dichos botones
+                }
             }
 
         }

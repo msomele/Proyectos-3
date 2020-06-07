@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f7602401e690b943b8cf8401f25eb36, type: 3}
+  m_Name: 2Barb_Ab_1
+  m_EditorClassIdentifier: 
+  aName: HammerSmash
+  aSprite: {fileID: 21300000, guid: f3beda411f9cbee40a12b313c3bc6c83, type: 3}
+  aSound: {fileID: 8300000, guid: acf1f52d79c074a44b92edf399653786, type: 3}
+  aBaseCd: 15
+  hammerDamage: 15
+  playerController: {fileID: 0}

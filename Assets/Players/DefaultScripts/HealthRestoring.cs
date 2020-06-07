@@ -28,8 +28,9 @@ public class HealthRestoring : MonoBehaviour
     }
     private void Update()
     {
-    
-        if(updatedHealth >= maxHealth) updatedHealth = maxHealth;
+            hpVisual.sizeDelta = new Vector2(updatedHealth/2, hpVisual.sizeDelta.y);
+
+        if (updatedHealth >= maxHealth) updatedHealth = maxHealth;
         if (updatedHealth < 0)
         {
             updatedHealth = 0;

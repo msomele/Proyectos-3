@@ -28,11 +28,7 @@ public class InputHandler : MonoBehaviour
 
 
     }
-    public void OnPause(CallbackContext context)
-    {
-        if (player != null)
-            holder.SetPauseMenu(context.ReadValue<float>());
-    }
+
     public void OnMove(CallbackContext context)
     {
         if(player != null)
@@ -70,6 +66,12 @@ public class InputHandler : MonoBehaviour
     {
         if (player != null)
             holder.SetAbility4InputVector(context.ReadValue<float>());
+
+    }
+    public void OnPauseMenu(CallbackContext context)
+    {
+        if (player != null)
+            holder.SetPauseMenu(context.ReadValue<float>());
 
     }
 }

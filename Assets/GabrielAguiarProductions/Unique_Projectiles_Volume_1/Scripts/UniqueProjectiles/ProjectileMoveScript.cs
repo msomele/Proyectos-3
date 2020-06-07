@@ -70,7 +70,7 @@ public class ProjectileMoveScript : MonoBehaviour {
             {
                 if (co.transform.GetComponent<BarbarianController>())
                 {
-                    co.transform.GetComponent<BarbarianController>().hp -= proyectileDamage;
+                    co.transform.GetComponent<HealthRestoring>().updatedHealth -= proyectileDamage;
                 }
             }
             if (co.transform.tag == "CurrentEnemyObjective")

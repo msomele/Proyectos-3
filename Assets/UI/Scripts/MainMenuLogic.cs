@@ -33,7 +33,7 @@ public class MainMenuLogic : MonoBehaviour
             BackToMainMenu();
         else
         {
-            // SelectPlayers = GameObject.FindObjectOfType<CharacterSelector>().gameObject;
+            SelectPlayers = GameObject.FindObjectOfType<CharacterSelector>().gameObject;
         }
     }
 
@@ -133,30 +133,35 @@ public class MainMenuLogic : MonoBehaviour
     ///
     public void ResumeGame()
     {
+        
         Time.timeScale = 1;
         MainMenu.SetActive(false);
         OptionsMenu.SetActive(false);
+        SelectPlayers.SetActive(true);
         Camera.main.GetComponentInChildren<PostProcessingRealtimeChanger>().ChangeFov(20);
     }
     public void PauseGame()
     {
         MainMenu.SetActive(true);
+        SelectPlayers.SetActive(false);
         OptionsMenu.SetActive(false);
     }
     public void GoToMainMenu(string Scene2LoadName)
     {
-        Destroy(SelectPlayers);
+        Time.timeScale = 1;
+        SelectPlayers.SetActive(false);
         SceneManager.LoadScene(Scene2LoadName);
     }
 
     public void CutrePause()
-    {
+    {/*
         if (Input.GetKeyDown(KeyCode.Space) && SceneManager.GetActiveScene().name == ("Scenario"))
         {
             Time.timeScale = 0;
             BackToMainMenu();
             Camera.main.GetComponentInChildren<PostProcessingRealtimeChanger>().ChangeFov(0);
         }
+        */
     }
     private void Update()
     {

@@ -7,12 +7,13 @@ public class HammerSmashColliderFunction : MonoBehaviour
     public BarbarianController player;
     public LayerMask enemymask;
 
-    private void OnCollisionEnter(Collision collision)
+    public void OnTriggerEnter(Collider collision)
     {
-        //if (collision.gameObject.layer == enemymask)
-        //{
-            foreach (ContactPoint enemies in collision.contacts)
-            {
+        /*
+        Debug.LogWarning(collision.gameObject.name);
+        if (collision.gameObject.layer == enemymask)
+        {
+            
                 if (collision.transform.GetComponent<SkeletonRagdoll>() && collision.transform.GetComponent<SkeletonController>().risen == true)
                 {
                     SkeletonRagdoll skeleton = collision.transform.GetComponent<SkeletonRagdoll>();
@@ -44,9 +45,9 @@ public class HammerSmashColliderFunction : MonoBehaviour
                     player.Explode();
                 }
 
-           // }
+           
         }
-        
+        */
 
 
     }

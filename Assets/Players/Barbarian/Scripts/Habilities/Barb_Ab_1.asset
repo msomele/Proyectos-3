@@ -13,10 +13,8 @@ MonoBehaviour:
   m_Name: Barb_Ab_1
   m_EditorClassIdentifier: 
   aName: HammerSmash
-  aSprite: {fileID: 21300000, guid: 488f840bd1dca6d48a5d0731e34e2ce0, type: 3}
+  aSprite: {fileID: 21300000, guid: f3beda411f9cbee40a12b313c3bc6c83, type: 3}
   aSound: {fileID: 8300000, guid: acf1f52d79c074a44b92edf399653786, type: 3}
-  aBaseCd: 1
-  hammerDamage: 10
-  hammerRange: 3
-  hammerRateAA: 2
+  aBaseCd: 15
+  hammerDamage: 15
   playerController: {fileID: 0}

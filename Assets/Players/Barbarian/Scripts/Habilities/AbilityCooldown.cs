@@ -15,9 +15,9 @@ public class AbilityCooldown : MonoBehaviour
     [SerializeField] //QUITAR ESTO MAS TARDE 
     private Ability ability;
     [SerializeField] //quitar
-    private GameObject aCWeaponHolder; 
+    private GameObject aCWeaponHolder;
 
-    private Image myButtonImage;
+    public Image myButtonImage;
     private AudioSource abilitySource;
 
     public bool startsInReady;
@@ -33,14 +33,14 @@ public class AbilityCooldown : MonoBehaviour
         abilityName = ability.aName;
         Initialize(ability,weaponHolder);
         SelectInput(abilityName); */
-        myButtonImage = GetComponent<Image>();
+        myButtonImage = this.gameObject.GetComponent<Image>();
         abilitySource = GetComponent<AudioSource>();
         aux = GetComponentsInChildren<Image>();
         darkMask = aux[1];
         coolDownTextDisplay = GetComponentInChildren<TMP_Text>();
     }
 
-    public void Initialize(Ability selectedAbility, GameObject weaponHolder)
+    public void Initialize(Ability selectedAbility, GameObject weaponHolder, Sprite abIcon)
     {
         ability = selectedAbility;
         abilityName = ability.aName;
@@ -50,9 +50,11 @@ public class AbilityCooldown : MonoBehaviour
         
         coolDownDuration = ability.aBaseCd;
         Debug.Log("A base cD: " + ability.aBaseCd);
-        /*
-        myButtonImage.sprite = ability.aSprite;
-        darkMask.sprite = ability.aSprite;*/
+        ///*
+        this.gameObject.GetComponent<Image>().sprite = abIcon;
+        //darkMask.enabled = true;
+        //darkMask.sprite = abIcon;   //REF ERROR WTF 
+        //*/
         ability.Initialize(aCWeaponHolder);
         if (startsInReady)
             AbilityReady();
@@ -75,8 +77,8 @@ public class AbilityCooldown : MonoBehaviour
 
     private void AbilityReady()
     {
-        coolDownTextDisplay.enabled = false; //!
-        darkMask.enabled = false; 
+        //coolDownTextDisplay.enabled = false; //!
+        //darkMask.enabled = false; 
     }
 
     private void CoolDown()

@@ -20,7 +20,7 @@ public class PlayerController : MonoBehaviour
     //public GameObject pauseMenu;
     public bool isGamePaused;
 
-    public float hp = 140;
+    public float hp = 350;
 
     //-----------------------MOVEMENT-------------------------------//
     [Header("Movement")]
@@ -95,10 +95,17 @@ public class PlayerController : MonoBehaviour
     public virtual void Update()
     {
         Look();
-        if (inputH.pauseInput == 1)
+        if (inputH.pauseInput != 0)
+        {
             PauseGame();
+            Debug.LogWarning("Start pressed");
+        }
 
         inputH.pauseInput = 0;
+
+        
+
+
     }
     public virtual void FixedUpdate()
     {
@@ -195,7 +202,7 @@ public class PlayerController : MonoBehaviour
     public void PauseGame()
     {
         if (!isGamePaused)
-        {
+        {Camera.main.GetComponentInChildren<PostProcessingRealtimeChanger>().ChangeFov(0);
             isGamePaused = true;
             Time.timeScale = 0f;
             myCamera.GetComponent<MainMenuLogic>().BackToMainMenu();
@@ -204,6 +211,7 @@ public class PlayerController : MonoBehaviour
         {
             isGamePaused = false;
             Time.timeScale = 1f;
+            Camera.main.GetComponentInChildren<PostProcessingRealtimeChanger>().ChangeFov(1);
             myCamera.GetComponent<MainMenuLogic>().ResumeGame();
         }
     }

@@ -18,9 +18,13 @@ public class ScenarioController : MonoBehaviour
     public GameObject VictoryText;
     public GameObject DefeatText;
     public GameObject FinalUI;
+    public BBDDconnection bbdd;
+
+    private bool bbddConnection; 
 
     private void Start()
     {
+        bbddConnection = false; 
         Time.timeScale = 1f;
         for (int i = 0; i < starsGameObject.Length-1; i++)
         {
@@ -76,6 +80,11 @@ public class ScenarioController : MonoBehaviour
             }
 
             timePasedText.text = ConvertSecondsToTimeString(gameTime);
+            if(!bbddConnection)
+            {
+                bbdd.UpdateDatabase(starsEarned, ConvertSecondsToTimeString(gameTime));
+                bbddConnection = true; 
+            }
         }
         
     }

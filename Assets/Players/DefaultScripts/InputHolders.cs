@@ -23,4 +23,5 @@ public class InputHolders : MonoBehaviour
     public void SetAbility3InputVector(float ability3) => ability3Input = ability3;
     public void SetAbility4InputVector(float ability4) => ability4Input = ability4;
     public void SetPauseMenu(float pause) => pauseInput = pause;
+
 }

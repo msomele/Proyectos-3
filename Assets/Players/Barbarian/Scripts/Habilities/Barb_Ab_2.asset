@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Barb_Ab_2
   m_EditorClassIdentifier: 
   aName: Healing
-  aSprite: {fileID: 21300000, guid: 7f64bc1e6fbfa5049ace10640898d823, type: 3}
+  aSprite: {fileID: 21300000, guid: 4aef30886b234fc4d9db69fb32d8e8b1, type: 3}
   aSound: {fileID: 8300000, guid: 055ce2d01bc78324ab58e0ad6abcff8f, type: 3}
-  aBaseCd: 40
+  aBaseCd: 30
   playerController: {fileID: 0}
   baseHealingSpeed: 5
   advancedHealingSpeed: 15

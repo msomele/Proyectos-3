@@ -11,11 +11,12 @@ public class BarbarianController : PlayerController
     public LayerMask explosionLayers;
 
     public Transform attackPointMin, attackPointMax;
+    public Transform attackPointMin_abi1, attackPointMax_abi1, distance_abi1;
     public bool isIdle;
     public bool isAtt1;
     public bool isAtt2;
     [HideInInspector] public float attackRange = 0.5f;
-    [HideInInspector] public float attackDamage = 20;
+    public float attackDamage = 20;
     [HideInInspector] public float attackRate = 2f; //nº of attacks/sg
 
     [HideInInspector] float nextAttackTime = 0f;
@@ -35,7 +36,7 @@ public class BarbarianController : PlayerController
     //-----------------------ABILITY1-------------------------------//
 
     public GameObject Ability1Collider;
-    [HideInInspector] public float ab1AttackDmg = 0f;
+    public float ab1AttackDmg = 0f;
     private float ability1ColliderTime = 3f;
 
     //-----------------------ABILITY2-------------------------------//
@@ -102,7 +103,6 @@ public class BarbarianController : PlayerController
 
     public override void Attack()
     {
-        bool shouldFury = false;
         barbarianAnimator.SetBool("Running", false);
         base.Attack();
 
@@ -121,7 +121,17 @@ public class BarbarianController : PlayerController
             doubleAttack = false;
         }
 
-        Collider[] hitten = Physics.OverlapCapsule(attackPointMin.position, attackPointMax.position, attackRange, enemyLayers); 
+        if(!hpRestoring.isAbility)
+            timePassedSinceHitten = 0;
+        hpRestoring.timePassedSinceHitten = timePassedSinceHitten; //reset si ataco al healing
+
+        //, 1.3f
+
+    }
+    public void TriggerDmgAAAction()
+    {
+        bool shouldFury = false;
+        Collider[] hitten = Physics.OverlapCapsule(attackPointMin.position, attackPointMax.position, attackRange, enemyLayers);
         foreach (Collider obj in hitten)
         {
             //Debug.Log("Damage dealed to ->" + obj.name);
@@ -143,49 +153,94 @@ public class BarbarianController : PlayerController
 
             if (obj.transform.GetComponent<LichController>())
             {
+                shouldFury = true;
                 obj.transform.GetComponent<LichController>().TakeDamage(attackDamage);
             }
 
             if (obj.transform.GetComponent<GolemController>())
-            {     
+            {
+                shouldFury = true;
                 obj.transform.GetComponent<GolemController>().TakeDamage(attackDamage);
             }
 
         }
 
-        if(hitten.Length > 0 && shouldFury)
+        if (hitten.Length >= 0 && shouldFury)
             IncrementFury();
 
-        if(!hpRestoring.isAbility)
-            timePassedSinceHitten = 0;
-        hpRestoring.timePassedSinceHitten = timePassedSinceHitten; //reset si ataco al healing
-
-        //, 1.3f
 
     }
-
 
     private void OnDrawGizmosSelected()
     {
-        if (attackPointMax == null || attackPointMin == null)
-            return; 
+        if (attackPointMax == null || attackPointMin == null || attackPointMin_abi1 == null || attackPointMax_abi1 == null)
+            return;
 
         Gizmos.DrawWireSphere(attackPointMin.position, attackRange);
         Gizmos.DrawWireSphere(attackPointMax.position, attackRange);
-        Gizmos.DrawLine(attackPointMin.position,attackPointMax.position);
+        Gizmos.DrawLine(attackPointMin.position, attackPointMax.position);
+        
     }
-
-    public void HammerSmash() 
+    private void OnDrawGizmos()
     {
+        Gizmos.DrawWireSphere(attackPointMin_abi1.position, 4);
+        Gizmos.DrawWireSphere(attackPointMax_abi1.position, 4);
+    }
+    public void HammerSmash()
+    {
+       
         barbarianAnimator.SetBool("Running", false);
         RotateTowardsPointer();
         barbarianAnimator.SetTrigger("HammerSmash");
-
-        
+       
 
         if (!hpRestoring.isAbility)
             timePassedSinceHitten = 0;
         hpRestoring.timePassedSinceHitten = timePassedSinceHitten;
+
+    }
+    public void TriggerDmgAb1Action()
+    {
+        Physics.SyncTransforms();
+        
+        Collider[] hitten = Physics.OverlapCapsule(attackPointMin_abi1.position, attackPointMax_abi1.position, 4 , enemyLayers);
+        bool shouldFury = false;
+        //Collider[] hitten = Physics.OverlapCapsule(attackPointMin_abi1.position, attackPointMax_abi1.position, 3.5f, enemyLayers); //Vector3.Distance(this.gameObject.transform.position, distance_abi1.position)
+        foreach (Collider obj in hitten)
+        {
+            //Debug.Log("Damage dealed to ->" + obj.name);
+
+            if (obj.transform.GetComponent<SkeletonRagdoll>() && obj.transform.GetComponent<SkeletonController>().risen == true)
+            {
+                SkeletonRagdoll skeleton = obj.transform.GetComponent<SkeletonRagdoll>();
+                if (obj.transform.GetComponent<SkeletonController>().agentState != EnemyAgent.AgentStates.Ragdolled)
+                    shouldFury = true;
+                else
+                    shouldFury = false;
+
+                if (skeleton != null)
+                {
+                    skeleton.Die();
+                }
+                Explode();
+            }
+
+            if (obj.transform.GetComponent<LichController>())
+            {
+                shouldFury = true;
+                obj.transform.GetComponent<LichController>().TakeDamage(ab1AttackDmg);
+            }
+
+            if (obj.transform.GetComponent<GolemController>())
+            {
+                shouldFury = true;
+                obj.transform.GetComponent<GolemController>().TakeDamage(ab1AttackDmg);
+            }
+
+        }
+
+        if (hitten.Length >= 0 && shouldFury)
+            IncrementFury();
 
     }
 
