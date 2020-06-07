@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   aName: HammerSmash
   aSprite: {fileID: 21300000, guid: f3beda411f9cbee40a12b313c3bc6c83, type: 3}
-  aSound: {fileID: 8300000, guid: acf1f52d79c074a44b92edf399653786, type: 3}
+  aSound: {fileID: 8300000, guid: 14bdeda084e837c4da235a9105956224, type: 3}
   aBaseCd: 15
   hammerDamage: 15
   playerController: {fileID: 0}
