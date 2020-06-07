@@ -9,3 +9,5 @@
 {"estrellas":0,"tiempo":"00:00:46"}
 {"estrellas":0,"tiempo":"00:00:09"}
 {"estrellas":0,"tiempo":"00:01:12"}
+{"estrellas":0,"tiempo":"00:00:53"}
+{"estrellas":0,"tiempo":"00:03:05"}
